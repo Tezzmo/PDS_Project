@@ -127,7 +127,10 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# custom for project
 data/input/inputData.csv
+data/output/tripData.csv
 .vscode/settings.json
 .idea/other.xml
 .idea/PDS_Project.iml
@@ -136,3 +139,6 @@ data/input/inputData.csv
 data/output/model.pkl
 notebooks/LorenzTest.py
 notebooks/00_Example.ipynb
+notebooks/dataExplorationJonas.ipynb
+.idea
+.idea/
