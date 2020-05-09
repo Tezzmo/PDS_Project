@@ -1,3 +1,7 @@
+# .csv Data
+
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -123,3 +127,18 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# custom for project
+data/input/inputData.csv
+data/output/tripData.csv
+.vscode/settings.json
+.idea/other.xml
+.idea/PDS_Project.iml
+.idea/vcs.xml
+.idea/inspectionProfiles/profiles_settings.xml
+data/output/model.pkl
+notebooks/LorenzTest.py
+notebooks/00_Example.ipynb
+notebooks/dataExplorationJonas.ipynb
+.idea
+.idea/
