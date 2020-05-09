@@ -2,6 +2,7 @@ from .utils import get_data_path
 import pandas as pd
 import os
 import pickle
+import numpy as np
 
 # load raw nextbike data as csv file from designated directory
 def read_file(path=os.path.join(get_data_path(), "input/inputData.csv")):
@@ -11,7 +12,7 @@ def read_file(path=os.path.join(get_data_path(), "input/inputData.csv")):
     except FileNotFoundError:
         print("Data file not found. Path was " + path)
 
-# preprocess the raw nextbike data with basic data cleaning techniques
+# preprocess the raw nextbike data with basic data cleaning techniques for creation of trips
 def preprocessData(df):
     # drop empty rows and unneccessary columns
     df.dropna(inplace=True)
@@ -25,8 +26,8 @@ def preprocessData(df):
 
     return df
 
-# create a dictionary which stores the names of the fixed stations for the p_number as key
-def createStationNameDictionary(df):
+# create dataframe with number, name and coordinates of fixed stations
+def createStations(df):
     # generate array of unique place numbers
     pNumbersUnique = df.p_number.unique()
 
@@ -36,12 +37,33 @@ def createStationNameDictionary(df):
         pName = df[df['p_number'] == i].p_name.unique()[0]
         pNamesUnique.append(pName)
 
-    # generate dictionary
-    pNameNumberDict = dict(zip(pNumbersUnique, pNamesUnique))
+    # generate array of unique place latitude coordinates in the same order
+    pLatUnique = []    
+    for i in pNumbersUnique:
+        pLat = df[df['p_number'] == i].p_lat.unique()[0]
+        pLatUnique.append(pLat)
 
-    pNameNumberDict[0] = 'Kein offizieller Standort'
+    # generate array of unique place longitude coordinates in the same order
+    pLongUnique = []    
+    for i in pNumbersUnique:
+        pLong = df[df['p_number'] == i].p_lng.unique()[0]
+        pLongUnique.append(pLong)
 
-    return pNameNumberDict
+    # create dataframe
+    df = pd.DataFrame()
+    df['pNumber'] = pNumbersUnique
+    df['pName'] = pNamesUnique
+    df['pLat'] = pLatUnique
+    df['pLong'] = pLongUnique
+    
+    # set dataframe index and manipulate one column
+    df = df.set_index('pNumber')
+    df.at[0, 'pName'] = 'no fixed station'
+    df.at[0, 'pLat'] = np.nan
+    df.at[0, 'pLong'] = np.nan
+    df = df.sort_index()
+
+    return df
 
 # create dataframe which contains the nextbike data in trip format
 def createTrips(df):
@@ -91,6 +113,38 @@ def createTrips(df):
                                              'weekend', 'bType', 'sPlaceNumber', 'ePlaceNumber'])
     
     return dfTrip
+
+# preprocess the raw nextbike data with basic data cleaning techniques for creation of fixed stations
+def preprocessStationData(df):
+    df = df[['datetime', 'p_bikes', 'p_number']]
+    df = df[df['p_number'] != 0]
+    df['datetime'] = pd.to_datetime(df['datetime'])
+    df = df[df['p_number'].notna()]
+    df['p_number'] = df['p_number'].astype('int64')
+    
+    return df
+
+# create a datetime index based on minutes as intervall which contains the available number of bikes per fixed station
+def createBikeNumberPerStationIndex(df):
+    dfStations = pd.DataFrame({'datetime': pd.date_range('2019-01-01', '2020-01-01', freq='min', closed='left')})
+    dfStations = dfStations.set_index('datetime')
+
+    stations = sorted(df['p_number'].unique())
+
+    for i in stations:
+        dfOneStation = df[df['p_number'] == i]
+        dfOneStation = dfOneStation.sort_values(by='datetime')
+        dfOneStation = dfOneStation.drop_duplicates(subset='datetime', keep='first')
+        dfOneStation = dfOneStation.drop(columns=['p_number'])
+        dfOneStation = dfOneStation.rename(columns={'p_bikes': i})
+        dfOneStation = dfOneStation.set_index('datetime')
+        dfStations = dfStations.join(dfOneStation, how='left')
+
+    dfStations.iloc[0] = 0
+    dfStations = dfStations.fillna(method='ffill', axis='index')
+    dfStations = dfStations.astype('int64')
+
+    return dfStations
 
 def read_model():
     path = os.path.join(get_data_path(), "output/model.pkl")
