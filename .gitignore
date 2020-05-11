@@ -142,3 +142,4 @@ notebooks/00_Example.ipynb
 notebooks/dataExplorationJonas.ipynb
 .idea
 .idea/
+data/output/StationData.csv
