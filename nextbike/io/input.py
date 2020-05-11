@@ -64,6 +64,16 @@ def createStations(df):
     df.at[0, 'pLong'] = np.nan
     df = df.sort_index()
 
+    # replace special characters in station names
+    df['pName'] = df['pName'].str.replace('ä', 'ae')
+    df['pName'] = df['pName'].str.replace('ü', 'ue')
+    df['pName'] = df['pName'].str.replace('ö', 'oe')
+    df['pName'] = df['pName'].str.replace('Ä', 'Ae')
+    df['pName'] = df['pName'].str.replace('Ü', 'Ue')
+    df['pName'] = df['pName'].str.replace('Ö', 'Oe')
+    df['pName'] = df['pName'].str.replace('ß', 'ss')
+    df['pName'] = df['pName'].str.replace('é', 'e')
+
     return df
 
 # create dataframe which contains the nextbike data in trip format
