@@ -14,7 +14,7 @@ lngRight = 8.864199
 
 #Define the number of 
 #Refine me
-limit = 10
+limit = 12000
 intervallLenght = math.floor(math.sqrt(limit))
 
 
@@ -88,11 +88,8 @@ def createAndSaveNNC(dfGripPoints,dfPostalCode):
 def createGrid():
 
     gridPointCoordinateList = computeGridPoints()
-
     gridPointPostalCodeList = getPostalCodes(gridPointCoordinateList)
-
     saveGrid(gridPointCoordinateList,gridPointPostalCodeList)
-
     createAndSaveNNC(gridPointCoordinateList,gridPointPostalCodeList)
 
 
