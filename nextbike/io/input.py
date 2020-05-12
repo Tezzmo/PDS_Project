@@ -3,6 +3,7 @@ import pandas as pd
 import os
 import pickle
 import numpy as np
+import datetime
 
 
 # load raw nextbike data as csv file from designated directory
@@ -161,3 +162,30 @@ def read_model():
     with open(path, "rb") as f:
         model = pickle.load(f)
     return model
+
+# drop outliers
+def drop_outliers(df):
+    # add column with durationInSec
+    df["durationInSec"] = df["duration"].dt.total_seconds().astype(int)
+
+    # calculate mean and standard deviation for each day
+    meanTripLengthPerDay = (df.groupby(df.sTime.dt.date).durationInSec.mean(numeric_only=False)).to_dict()
+    stdTripLengthPerDay = (df.groupby(df.sTime.dt.date).durationInSec.std()).to_dict()
+
+    # initialize data
+    date = datetime.date(2019, 1, 20)
+    mean = meanTripLengthPerDay.get(date)
+    std = stdTripLengthPerDay.get(date)
+
+    for index, row in df.iterrows():
+        newDate = row['sTime'].date()
+        # check if new mean and std need to be loaded
+        if (newDate != date):
+            date = newDate
+            mean = meanTripLengthPerDay.get(date)
+            std = stdTripLengthPerDay.get(date)
+        # drop outliers that are not within the range of mean +- 2x standard deviation
+        if (row['durationInSec'] < (mean - 2 * std) or row['durationInSec'] > (mean + 2 * std)):
+            df.drop(index, inplace=True)
+
+    return df
