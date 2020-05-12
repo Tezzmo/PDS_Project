@@ -142,5 +142,6 @@ notebooks/00_Example.ipynb
 notebooks/dataExplorationJonas.ipynb
 .idea
 .idea/
-notebooks/00_Example.ipynb
 data/output/StationData.csv
+data/output/StationBikeNumberData.csv
+

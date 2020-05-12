@@ -64,6 +64,7 @@ def createStations(df):
     df.at[0, 'pLong'] = np.nan
     df = df.sort_index()
 
+    # replace special characters in station names
     df['pName'] = df['pName'].str.replace('ä', 'ae')
     df['pName'] = df['pName'].str.replace('ü', 'ue')
     df['pName'] = df['pName'].str.replace('ö', 'oe')
