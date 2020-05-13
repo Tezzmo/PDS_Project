@@ -1,5 +1,7 @@
 import folium
 import matplotlib.pyplot as plt
+import seaborn as sns
+import pandas as pd
 
 def visualizeNumberOfBikesPerStation(pointInTime, dfStations, dfStationBikeNumber):
 
@@ -94,3 +96,19 @@ def visualizeNumberOfTrips(df):
     plt.xlabel('Hour')
 
     return plt
+
+def visualizeTripLengthBoxplots(df):
+    fig, axes = plt.subplots(3, 1, figsize=(20, 15))
+    fig.suptitle('Trip Length in Boxplots')
+    df['month'] = pd.DatetimeIndex(df["sTime"]).month
+    df['day'] = pd.DatetimeIndex(df["sTime"]).day
+    df['hour'] = pd.DatetimeIndex(df["sTime"]).hour
+
+    # Boxplots per Month
+    sns.boxplot(y='durationInSec', x='month', data=df, palette="colorblind", showfliers=False, ax=axes[0])
+    # Boxplots per Day
+    sns.boxplot(y='durationInSec', x='day', data=df, palette="colorblind", showfliers=False, ax=axes[1])
+    # Boxplots per Day
+    sns.boxplot(y='durationInSec', x='hour', data=df, palette="colorblind", showfliers=False, ax=axes[2])
+
+    return sns
