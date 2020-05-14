@@ -36,16 +36,16 @@ def getWeatherData():
     dfPrecipitation = read_precData()
 
     # drop unneccessary columns
-    dfTemperature.drop(columns=['STATIONS_ID', 'QN_9', 'RF_TU', 'eor'], inplace = True, axis=1)
-    dfPrecipitation.drop(columns=['STATIONS_ID', 'QN_8', 'WRTR', 'eor'], inplace = True, axis=1)
+    dfTemperature.drop(columns=['STATIONS_ID', 'QN', 'PP_10', 'TT_10', 'RF_10', 'TD_10', 'eor'], inplace = True, axis=1)
+    dfPrecipitation.drop(columns=['STATIONS_ID', 'QN', 'RWS_DAU_10', 'RWS_IND_10', 'eor'], inplace = True, axis=1)
 
     # convert string to datetime
-    dfTemperature['MESS_DATUM'] = pd.to_datetime(dfTemperature['MESS_DATUM'], format = '%Y%m%d%H')
-    dfPrecipitation['MESS_DATUM'] = pd.to_datetime(dfPrecipitation['MESS_DATUM'], format = '%Y%m%d%H')
+    dfTemperature['MESS_DATUM'] = pd.to_datetime(dfTemperature['MESS_DATUM'], format = '%Y%m%d%H%M')
+    dfPrecipitation['MESS_DATUM'] = pd.to_datetime(dfPrecipitation['MESS_DATUM'], format = '%Y%m%d%H%M')
 
     # rename columns
-    dfTemperature.rename(columns={'MESS_DATUM': 'date', 'TT_TU': 'temperature'}, inplace=True)
-    dfPrecipitation.rename(columns={'MESS_DATUM': 'date', '  R1': 'precipitation', 'RS_IND': 'precipitationBool'}, inplace=True)
+    dfTemperature.rename(columns={'MESS_DATUM': 'date', 'TM5_10': 'temperature'}, inplace=True)
+    dfPrecipitation.rename(columns={'MESS_DATUM': 'date', 'RWS_10': 'precipitation'}, inplace=True)
 
     # filter for year 2019
     dfTemperature = dfTemperature[(dfTemperature['date'].dt.year == 2019)]
@@ -57,9 +57,6 @@ def getWeatherData():
 
     # combine different weather dataframes based on time index
     dfWeather = pd.concat([dfTemperature, dfPrecipitation], axis = 1)
-
-    # fill null values with forward fill
-    dfWeather.fillna(method='ffill', inplace = True)
 
     return dfWeather
 

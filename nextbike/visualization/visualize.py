@@ -2,6 +2,7 @@ import folium
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
+import numpy as np
 
 def visualizeNumberOfBikesPerStation(pointInTime, dfStations, dfStationBikeNumber):
 
@@ -112,3 +113,33 @@ def visualizeTripLengthBoxplots(df):
     sns.boxplot(y='durationInSec', x='hour', data=df, palette="colorblind", showfliers=False, ax=axes[2])
 
     return sns
+
+def visualizeWeatherData(df):
+    # calculate aggregate statistics
+    minTemperaturePerWeek = df.groupby(df.index.week).temperature.min()
+    maxTemperaturePerWeek = df.groupby(df.index.week).temperature.max()
+    meanPrecipitationPerWeek = df.groupby(df.index.week).precipitation.mean()
+    # create plot
+    fig, ax1 = plt.subplots(figsize=(20, 10))
+
+    # create plot for temperature data
+    ax1.plot(minTemperaturePerWeek.index, minTemperaturePerWeek, '--k', label="Minimum temperature")
+    ax1.plot(maxTemperaturePerWeek.index, maxTemperaturePerWeek, '-k', label="Maximum temperature")
+    ax1.set_ylabel('Temperature (in $^\circ C$ )',size=14)
+    ax1.legend(loc=2)
+    # fill area between min and max line
+    ax1=plt.gca()
+    ax1.axis([0,52,-20,50])
+    plt.gca().fill_between(minTemperaturePerWeek.index, minTemperaturePerWeek, maxTemperaturePerWeek, facecolor='red', alpha=0.1)
+
+    # create plot for precipitation data
+    ax2 = ax1.twinx()
+    ax2.bar(meanPrecipitationPerWeek.index, meanPrecipitationPerWeek)
+    ax2.set_ylabel('Precipitation (in mm)',size=14)
+    ax2.axis([0,52,0,0.2])
+    ax2.set_xlabel('Month',size=14)
+
+    plt.title('Temperature & Precipitation in Marburg (2019)',size=14)
+    plt.xticks(np.arange(0,52,4.7), ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'])
+
+    return plt
