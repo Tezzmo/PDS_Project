@@ -35,39 +35,46 @@ dfWeatherMinutes = pd.DataFrame({'date': pd.date_range('2019-01-01', '2020-01-01
 dfWeatherMinutes = dfWeatherMinutes.set_index('date')
 dfWeatherMinutes = dfWeatherMinutes.join(dfWeather)
 dfWeatherMinutes = dfWeatherMinutes.fillna(axis='index', method='ffill')
+dfWeatherMinutes
 
-#%%
-dfWeatherMinutes.columns
+dfWeatherMinutes['sTime'] = dfWeatherMinutes.index
 
 #%%
 #Rundet zur nächsten glatten 10 min ab und merge mit wetter daten
 #dfTripsC['sTimeRoundet'] = dfTripsC['sTime'].apply(lambda dt: datetime.datetime(dt.year, dt.month, dt.day, dt.hour,10*(dt.minute // 10)))
-dfTripsF = dfTripsC.set_index('sTime').join(dfWeatherMinutes,how='inner',lsuffix='_l', rsuffix='_r')
+dfTripsF = dfTripsC.join(dfWeatherMinutes,how='inner',lsuffix='_l', rsuffix='_r', on='sTime' )
 
-#%%
-dfTripsF.columns
-dfTripsF = dfTripsF.drop(['Unnamed: 0'],axis=1)
-dfTripsF
-# %%
-#Change Datetime to numeric -- needed?
-dfTripsF['sTime'] = pd.to_numeric(dfTripsF['sTime'])
-dfTripsF['eTime'] = pd.to_numeric(dfTripsF['eTime'])
+dfTripsF['sYear'] = dfTripsF['sTime'].dt.year
+dfTripsF['sMonth'] = dfTripsF['sTime'].dt.month
+dfTripsF['sDay'] = dfTripsF['sTime'].dt.day
+dfTripsF['sHour'] = dfTripsF['sTime'].dt.hour
+dfTripsF['sMinute'] = dfTripsF['sTime'].dt.minute
 
+dfTripsF.drop(['sTime_l','sTime_r'],axis=1,inplace=True)
 
-#%%
-#Set duration to numeric - LÖittle higher accuracy with secounds
-#dfTripsF['duration'] = round(dfTripsF['duration'].dt.total_seconds().divide(60),0)
 dfTripsF['duration'] = dfTripsF['duration'].dt.total_seconds()
 
+dfTripsF.drop(['eTime','eLong','eLat','ePlaceNumber'],axis=1,inplace=True)
+
+#dfTripsF.loc[dfTripsF['precipitation'] >= 0.1, 'isRain'] = 1
+#dfTripsF.loc[dfTripsF['precipitation'] < 0.1, 'isRain'] = 0
+
+dfTripsF.drop(['bNumber','sLong','sLat'],axis=1,inplace=True)
+dfTripsF.drop(['sDay','sYear','sMinute','bType'],axis=1,inplace=True)
+
+dfTripsF.drop('sTime',axis=1,inplace=True)
+dfTripsF.drop('precipitation',axis=1,inplace=True)
 
 #%%
-#Lets drop a little bit features
-#Must be dropped
-dfTripsF.drop(['eTime','eLong','eLat','ePlaceNumber'],axis=1,inplace=True)
-#Make sno difference
-dfTripsF.drop(['bNumber','sLong','sLat'],axis=1,inplace=True)
+dfTripsF[dfTripsF['weekend']==False]['weekend'] = 0
+dfTripsF[dfTripsF['weekend']==True]['weekend'] = 1
+dfTripsF['weekend'] = dfTripsF.weekend.astype('int64')
+#%%
+dfTripsF.drop('weekend',axis=1,inplace=True)
+dfTripsF
 
-
+#%%
+dfTripsF.info()
 #%%
 #Build new features
 #sPlaceNumber -- Stupid ?
@@ -77,33 +84,36 @@ dfTripsF.drop(['bNumber','sLong','sLat'],axis=1,inplace=True)
 #dfTripsF['sPlaceNumber_Pow4'] = dfTripsF['sPlaceNumber']**4
 #dfTripsF['sPlaceNumber_Pow5'] = dfTripsF['sPlaceNumber']**5
 
-dfTripsF['sTime_Pow2'] = dfTripsF['sPlaceNumber']**2
-dfTripsF['sTime_Pow3'] = dfTripsF['sPlaceNumber']**3
-dfTripsF['sTime_Pow4'] = dfTripsF['sPlaceNumber']**4
-dfTripsF['sTime_Pow5'] = dfTripsF['sPlaceNumber']**5
+dfTripsF['sHour2'] = dfTripsF['sHour']**2
+dfTripsF['sHour3'] = dfTripsF['sHour']**3
+dfTripsF['sHour4'] = dfTripsF['sHour']**4
+dfTripsF['sHour5'] = dfTripsF['sHour']**5
 
 #%%
+dfTripsF.corr()
+
+
+#####################################################################LINEAR REGRESSION###############################################
+#%%
+from sklearn.preprocessing import StandardScaler
+st_scaler = StandardScaler()
 dfTripsF.dropna(inplace=True)
 
 y = dfTripsF[['duration']]
 x = dfTripsF.drop('duration',axis=1)
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=0)
 
+x_train=st_scaler.fit_transform(x_train)
+x_test=st_scaler.transform(x_test)
 #Train model
-linReg = LinearRegression(normalize=True).fit(x_train, y_train)
+linReg = LinearRegression().fit(x_train, y_train)
 
 # %%
 predict = linReg.predict(x_test)
 mean_absolute_error(y_test, predict)
 
 # %%
-linReg.coef_
-
-# %%
-y_test
-
-# %%
-dfTripsF.corr()
+dfTripsF.describe()
 
 # %%
 from sklearn.svm import SVR
@@ -128,7 +138,7 @@ x_train
 
 
 
-
+###################################################################################TIME TEST###############################################
 
 #%%
 #from numba import jit, cuda 
@@ -159,7 +169,7 @@ print("no GPU:", timer()-start)
 
 
 
-
+##########################################################################NEURAL NETWORK###########################################
 
 
 # %%
@@ -169,23 +179,63 @@ from tensorflow.keras import layers
 
 print(tf.__version__)
 
+#%%
+y = dfTripsF['duration']
+x = dfTripsF.drop('duration',axis=1)
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=0)
+
+#%%
+from sklearn.preprocessing import StandardScaler
+#%%
+st_scaler = StandardScaler()
+st_scaler.fit(x_train)
+
+x_train_Scaled=st_scaler.transform(x_train)
+x_test_Scaled=st_scaler.transform(x_test)
+
 
 # %%
-def build_model():
-  model = keras.Sequential([
-    layers.Dense(64, activation='relu', input_shape=[len(train_dataset.keys())]),
-    layers.Dense(64, activation='relu'),
-    layers.Dense(1)
-  ])
+model = keras.Sequential(
+    [layers.Dense(36, activation="relu", input_shape=[x_train.shape[1]]),
+    layers.Dense(36, activation="relu"),
+     layers.Dense(1)])
 
-  optimizer = tf.keras.optimizers.RMSprop(0.001)
+# %%
+optimizer = keras.optimizers.RMSprop(0.001)
 
-  model.compile(loss='mse',
-                optimizer=optimizer,
-                metrics=['mae', 'mse'])
-  return model
+# %%
+model.compile(loss='mse',
+             optimizer=optimizer,
+             metrics=["mae", "mse"])
+
+# %%
+model.summary()
+
+# %%
+epochs = 2
+
+history = model.fit(x_train_Scaled, y_train.values,
+                   epochs=epochs, validation_split=0.2)
+
+# %%
+history_df = pd.DataFrame(history.history)
+history_df
+root_metrics_df = history_df[["mse", "val_mse"]].apply(np.sqrt)
+root_metrics_df.rename({"mse":"rmse", "val_mse":"val_rmse"}, axis=1, inplace=True)
+root_metrics_df
+
+# %%
+y_pred = model.predict(x_test)
+
+#%%
+mean_absolute_error(y_test, y_pred)
+
+# %%
+y_pred
+
+# %%
+y_train.values
 
 
-mode = build_model()
 
-print(model.summary())
+# %%
