@@ -14,6 +14,52 @@ def read_file(path=os.path.join(get_data_path(), "input/inputData.csv")):
     except FileNotFoundError:
         print("Data file not found. Path was " + path)
 
+# load temperature data as csv file from designated directory
+def read_tempData(path=os.path.join(get_data_path(), "input/air_temperature.txt")):
+    try:
+        df = pd.read_csv(path, sep=';')
+        return df
+    except FileNotFoundError:
+        print("Data file not found. Path was " + path)
+
+# load precipitation data as csv file from designated directory
+def read_precData(path=os.path.join(get_data_path(), "input/precipitation.txt")):
+    try:
+        df = pd.read_csv(path, sep=';')
+        return df
+    except FileNotFoundError:
+        print("Data file not found. Path was " + path)
+
+def getWeatherData():
+    # load temperature and precipitation data
+    dfTemperature = read_tempData()
+    dfPrecipitation = read_precData()
+
+    # drop unneccessary columns
+    dfTemperature.drop(columns=['STATIONS_ID', 'QN', 'PP_10', 'TT_10', 'RF_10', 'TD_10', 'eor'], inplace = True, axis=1)
+    dfPrecipitation.drop(columns=['STATIONS_ID', 'QN', 'RWS_DAU_10', 'RWS_IND_10', 'eor'], inplace = True, axis=1)
+
+    # convert string to datetime
+    dfTemperature['MESS_DATUM'] = pd.to_datetime(dfTemperature['MESS_DATUM'], format = '%Y%m%d%H%M')
+    dfPrecipitation['MESS_DATUM'] = pd.to_datetime(dfPrecipitation['MESS_DATUM'], format = '%Y%m%d%H%M')
+
+    # rename columns
+    dfTemperature.rename(columns={'MESS_DATUM': 'date', 'TM5_10': 'temperature'}, inplace=True)
+    dfPrecipitation.rename(columns={'MESS_DATUM': 'date', 'RWS_10': 'precipitation'}, inplace=True)
+
+    # filter for year 2019
+    dfTemperature = dfTemperature[(dfTemperature['date'].dt.year == 2019)]
+    dfPrecipitation = dfPrecipitation[(dfPrecipitation['date'].dt.year == 2019)]
+
+    # set index
+    dfTemperature.set_index('date', inplace = True)
+    dfPrecipitation.set_index('date', inplace = True)
+
+    # combine different weather dataframes based on time index
+    dfWeather = pd.concat([dfTemperature, dfPrecipitation], axis = 1)
+
+    return dfWeather
+
 # preprocess the raw nextbike data with basic data cleaning techniques for creation of trips
 def preprocessData(df):
     # drop empty rows and unneccessary columns
