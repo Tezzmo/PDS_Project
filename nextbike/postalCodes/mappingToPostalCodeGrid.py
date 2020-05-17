@@ -17,7 +17,8 @@ def assignPostalCode(dfInput):
     #Load NN-Classifier
     path = path=os.path.join(get_ml_path(), "postalCode/nearestNeighbor_PostalCode.pkl")
     nnc = joblib.load(path , mmap_mode ='r')
-    dfWithPostalCode['postalCode'] = nnc.predict(dfWithPostalCode[['p_lat','p_lng']])
+    dfWithPostalCode['sPostalCode'] = nnc.predict(dfWithPostalCode[['sLat','sLong']])
+    dfWithPostalCode['ePostalCode'] = nnc.predict(dfWithPostalCode[['eLat','eLong']])
 
     return dfWithPostalCode
     

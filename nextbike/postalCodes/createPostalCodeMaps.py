@@ -13,17 +13,18 @@ import os
 #Give dfTrips including postalCode
 def createTripsPerPostalCodeMap(dfTrips,month,start):
 
-    if start == True:
-        param = 'start'
-    else:
-        param = 'end'
-
     #Collecting the required Data
-    dfFiltered = dfTrips[dfTrips['trip']==param][['trip','datetime','postalCode']]
-    
+    dfFiltered = dfTrips[['sTime','sPostalCode','ePostalCode']]
+
+    if start == True:
+        dfFiltered['postalCode'] = dfFiltered[['sPostalCode']]
+    else:
+        dfFiltered['postalCode'] = dfFiltered[['ePostalCode']]
+
+    dfFiltered.drop(['sPostalCode','ePostalCode'],axis=1,inplace=True)
     #Filter for month
-    dfFiltered['datetime'] = pd.to_datetime(dfFiltered['datetime'])
-    dfFiltered['month'] = pd.DatetimeIndex(dfFiltered["datetime"]).month
+    #dfFiltered['sTime'] = pd.to_datetime(dfFiltered['sTime'])
+    dfFiltered['month'] = pd.DatetimeIndex(dfFiltered["sTime"]).month
     dfFilteredRdy = dfFiltered[dfFiltered['month'] == month]
 
     #Count the number of starts per postalcode area
