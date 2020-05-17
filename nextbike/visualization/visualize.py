@@ -4,22 +4,72 @@ import seaborn as sns
 import pandas as pd
 import numpy as np
 
-def visualizeNumberOfBikesPerStation(pointInTime, dfStations, dfStationBikeNumber):
 
+# visualize number of bikes per fixed station and time
+def visualizeNumberOfBikesPerStationMap(pointInTime, dfStations, dfStationBikeNumber):
+
+    # create map
     m = folium.Map(location=[50.8008, 8.7667], zoom_start=13, tiles='Stamen Toner')
 
+    # get number of bikes for all stations at specific time
     bikesPerStation = dfStationBikeNumber.loc[pointInTime]
+    
+    # iterrate over all stations
     for index, row in dfStations.iloc[1:].iterrows():     
+
+        colorStation = ''
+
+        # get number of bikes for station
+        radiusStation = int(bikesPerStation[int(row.name)])
+
+        # set colorcode for marker based on number of bikes
+        if  radiusStation < 11:
+            colorStation = '#ff0000'
+        elif 10 < radiusStation < 21:
+            colorStation = '#e4e400'
+        elif 20 < radiusStation < 31:
+            colorStation = '#008000'
+        elif 30 < radiusStation < 41:
+            colorStation = '#1e90ff'
+        elif radiusStation > 40:
+            colorStation = '#0000ff'
+
+        # configure and set marker to map
         folium.CircleMarker(
             location=[row['pLat'], row['pLong']],
-            radius=int(bikesPerStation[int(row.name)]),
+            radius=radiusStation,
             popup=row['pName'],
-            color='#3186cc',
+            color=colorStation,
             fill=True,
-            fill_color='#3186cc'
+            fill_color=colorStation
         ).add_to(m)
+    
+    # add an color legend to the map
+    legend_html =   '''
+                <div style="position: fixed; bottom: 50px; left: 50px; width: 150px; height: 130px; border:2px solid grey; z-index:9999; font-size:14px; background-color: white">
+                &nbsp; <b>Color Legend</b><br>
+                &nbsp; <text style='color: #ff0000;'>00 - 10 bikes/station</text><br>
+                &nbsp; <text style='color: #e4e400;'>11 - 20 bikes/station</text><br>
+                &nbsp; <text style='color: #008000;'>21 - 30 bikes/station</text><br>
+                &nbsp; <text style='color: #1e90ff;'>31 - 40 bikes/station</text><br>
+                &nbsp; <text style='color: #0000ff;'>41 - 50 bikes/station</text><br>
+                </div>
+                ''' 
 
+    m.get_root().html.add_child(folium.Element(legend_html))
+
+    #return final map
     return m
+
+def visualizeNumberOfBikesPerStationBarplot(pointInTime, dfStations, dfStationBikeNumber):
+    bikesPerStation = dfStationBikeNumber.loc[pointInTime].array
+    stationNames = dfStations['pName'].iloc[1:].array
+    plt.figure(figsize=(20,10))
+    plt.bar(stationNames, bikesPerStation)
+    plt.xticks(rotation=90)
+    plt.show()
+    
+  
 
 def visualizeMeanTripLength(df):
     # Calculate mean trip length per month, day, hour
@@ -113,6 +163,7 @@ def visualizeTripLengthBoxplots(df):
     sns.boxplot(y='durationInSec', x='hour', data=df, palette="colorblind", showfliers=False, ax=axes[2])
 
     return sns
+
 
 def visualizeDistributionOfTripsPerMonth(df):
     jan = (df.loc[(df['sTime'].dt.month==1)])["durationInSec"]
@@ -220,5 +271,36 @@ def visualizeDistributionOfTripsPerMonth(df):
     plt.hist(dec, normed = True ,bins=100)
     plt.plot(x_dec, stats.norm.pdf(x_dec, meanTripLengthPerMonth.get(12), stdTripLengthPerMonth.get(12)))
     plt.title("December")
+
+    return plt
+
+  
+def visualizeWeatherData(df):
+    # calculate aggregate statistics
+    minTemperaturePerWeek = df.groupby(df.index.week).temperature.min()
+    maxTemperaturePerWeek = df.groupby(df.index.week).temperature.max()
+    meanPrecipitationPerWeek = df.groupby(df.index.week).precipitation.mean()
+    # create plot
+    fig, ax1 = plt.subplots(figsize=(20, 10))
+
+    # create plot for temperature data
+    ax1.plot(minTemperaturePerWeek.index, minTemperaturePerWeek, '--k', label="Minimum temperature")
+    ax1.plot(maxTemperaturePerWeek.index, maxTemperaturePerWeek, '-k', label="Maximum temperature")
+    ax1.set_ylabel('Temperature (in $^\circ C$ )',size=14)
+    ax1.legend(loc=2)
+    # fill area between min and max line
+    ax1=plt.gca()
+    ax1.axis([0,52,-20,50])
+    plt.gca().fill_between(minTemperaturePerWeek.index, minTemperaturePerWeek, maxTemperaturePerWeek, facecolor='red', alpha=0.1)
+
+    # create plot for precipitation data
+    ax2 = ax1.twinx()
+    ax2.bar(meanPrecipitationPerWeek.index, meanPrecipitationPerWeek)
+    ax2.set_ylabel('Precipitation (in mm)',size=14)
+    ax2.axis([0,52,0,0.2])
+    ax2.set_xlabel('Month',size=14)
+
+    plt.title('Temperature & Precipitation in Marburg (2019)',size=14)
+    plt.xticks(np.arange(0,52,4.7), ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'])
 
     return plt
