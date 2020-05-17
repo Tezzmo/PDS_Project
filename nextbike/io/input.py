@@ -5,7 +5,6 @@ import pickle
 import numpy as np
 import datetime
 
-
 # load raw nextbike data as csv file from designated directory
 def read_file(path=os.path.join(get_data_path(), "input/inputData.csv")):
     try:
