@@ -3,28 +3,18 @@
 
 # %%
 import nextbike
-
-# %%
-df = nextbike.io.read_file()
-
-#%%
-dfTrips = nextbike.io.createTrips(df)
-
-#%%
-dfTrips.to_csv("savedTrips.csv",sep=';')
-#%%
-dfTrips = pd.read_csv("savedTrips.csv",sep=';')
-#%%
-dfTripsC=dfTrips
-dfTripsC.info()
-
-#%%
 import datetime
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_absolute_error
+
+
+# %%
+dfTrips = nextbike.io.readFinalTrips()
+dfTripsC=dfTrips
+dfTripsC.info()
 
 
 
@@ -49,6 +39,7 @@ dfTripsF['sMonth'] = dfTripsF['sTime'].dt.month
 dfTripsF['sDay'] = dfTripsF['sTime'].dt.day
 dfTripsF['sHour'] = dfTripsF['sTime'].dt.hour
 dfTripsF['sMinute'] = dfTripsF['sTime'].dt.minute
+dfTripsF['sDayOfWeek'] = dfTripsF['sTime'].dt.weekday
 
 dfTripsF.drop(['sTime_l','sTime_r'],axis=1,inplace=True)
 
@@ -66,6 +57,9 @@ dfTripsF.drop('sTime',axis=1,inplace=True)
 dfTripsF.drop('precipitation',axis=1,inplace=True)
 
 #%%
+dfTripsF
+
+#%%
 dfTripsF[dfTripsF['weekend']==False]['weekend'] = 0
 dfTripsF[dfTripsF['weekend']==True]['weekend'] = 1
 dfTripsF['weekend'] = dfTripsF.weekend.astype('int64')
@@ -73,100 +67,14 @@ dfTripsF['weekend'] = dfTripsF.weekend.astype('int64')
 dfTripsF.drop('weekend',axis=1,inplace=True)
 dfTripsF
 
+
+
+#################   Feature Creation
+#%%
+
+
 #%%
 dfTripsF.info()
-#%%
-#Build new features
-#sPlaceNumber -- Stupid ?
-
-#dfTripsF['sPlaceNumber_Pow2'] = dfTripsF['sPlaceNumber']**2
-#dfTripsF['sPlaceNumber_Pow3'] = dfTripsF['sPlaceNumber']**3
-#dfTripsF['sPlaceNumber_Pow4'] = dfTripsF['sPlaceNumber']**4
-#dfTripsF['sPlaceNumber_Pow5'] = dfTripsF['sPlaceNumber']**5
-
-dfTripsF['sHour2'] = dfTripsF['sHour']**2
-dfTripsF['sHour3'] = dfTripsF['sHour']**3
-dfTripsF['sHour4'] = dfTripsF['sHour']**4
-dfTripsF['sHour5'] = dfTripsF['sHour']**5
-
-#%%
-dfTripsF.corr()
-
-
-#####################################################################LINEAR REGRESSION###############################################
-#%%
-from sklearn.preprocessing import StandardScaler
-st_scaler = StandardScaler()
-dfTripsF.dropna(inplace=True)
-
-y = dfTripsF[['duration']]
-x = dfTripsF.drop('duration',axis=1)
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=0)
-
-x_train=st_scaler.fit_transform(x_train)
-x_test=st_scaler.transform(x_test)
-#Train model
-linReg = LinearRegression().fit(x_train, y_train)
-
-# %%
-predict = linReg.predict(x_test)
-mean_absolute_error(y_test, predict)
-
-# %%
-dfTripsF.describe()
-
-# %%
-from sklearn.svm import SVR
-from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import StandardScaler
-import numpy as np
-from numba import jit, cuda 
-
-#%%
-@jit
-def train():
-    regr = make_pipeline(StandardScaler(), SVR(C=0.2, epsilon=0.2))
-    regr.fit(x_train, y_train)
-
-train()
-
-# %%
-regr.predict(x_test)
-
-# %%
-x_train
-
-
-
-###################################################################################TIME TEST###############################################
-
-#%%
-#from numba import jit, cuda 
-import numpy as np 
-from timeit import default_timer as timer 
-
-
-# %%
-n = 10000000                            
-a = np.ones(n, dtype = np.float64) 
-start = timer() 
-nextbike.io.func2(a)
-print("with GPU:", timer()-start) 
-
-# %%
-n = 10000000                            
-a = np.ones(n, dtype = np.float64) 
-start = timer() 
-nextbike.io.func1(a)
-print("no GPU:", timer()-start) 
-
-
-
-
-
-
-
-
 
 
 ##########################################################################NEURAL NETWORK###########################################
@@ -179,34 +87,12 @@ from tensorflow.keras import layers
 print(tf.__version__)
 
 #%%
-dfTripsF.dropna()
+dfTripsF.dropna(inplace=True)
 X = dfTripsF.drop("duration", axis=1).reset_index().drop('index',axis=1)
 y = dfTripsF["duration"].tolist()
 y = pd.DataFrame(y)
 
-#%%
-X = X.drop(['sPlaceNumber','temperature','sHour'],axis=1)
-#%%
-X.describe()
-#%%
-X=[
-    [0,2],
-    [1,2],
-    [2,3],
-    [2,2],
-    [4,0],
-    [3,5],
-    [4,1],
-    [2,4],
-    [2,5],
-    [4,1]
-]
-X = pd.DataFrame(X)
-y=[0,2,3,4,6,7,8,9,10,11]
-y = pd.DataFrame(y)
 
-#%%
-X
 #%%
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
 
@@ -226,7 +112,7 @@ model = keras.Sequential(
      layers.Dense(1)])
 
 #%%
-optimizer = keras.optimizers.RMSprop(0.001)
+optimizer = keras.optimizers.RMSprop(0.0005)
 
 #%%
 model.compile(loss='mse',
@@ -238,10 +124,7 @@ model.compile(loss='mse',
 model.summary()
 
 #%%
-model.predict(X_train_scaled[:10])
-
-#%%
-epochs = 2
+epochs = 8
 
 history = model.fit(X_train_scaled, y_train.values,
                    epochs=epochs, validation_split=0.2)
@@ -255,12 +138,9 @@ X_test_scaled = st_scaler.transform(X_test)
 y_pred = model.predict(X_test_scaled)
 y_pred
 #%%
-print("RMSE: ", np.sqrt(metrics.mean_squared_error(y_test, y_pred)))
 print("MAE: ", mean_absolute_error(y_test, y_pred))
 
-
-
-
-
+#%%
+dfTripsF.corr()
 
 # %%
