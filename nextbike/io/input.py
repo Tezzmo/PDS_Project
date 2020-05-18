@@ -29,6 +29,24 @@ def read_precData(path=os.path.join(get_data_path(), "input/precipitation.txt"))
     except FileNotFoundError:
         print("Data file not found. Path was " + path)
 
+
+
+def readFinalTrips(path=os.path.join(get_data_path(), "input/trips.csv")):
+    try:
+        df = pd.read_csv(path, sep=';')
+
+        df['sTime'] = pd.to_datetime(df['sTime'])
+        df['eTime'] = pd.to_datetime(df['eTime'])
+        df['duration'] = pd.to_timedelta(df['duration'])
+   
+        df.drop('Unnamed: 0',axis=1,inplace=True)
+
+
+        return df
+    except FileNotFoundError:
+        print("Data file not found. Path was " + path) 
+
+
 def getWeatherData():
     # load temperature and precipitation data
     dfTemperature = read_tempData()
@@ -170,6 +188,8 @@ def createTrips(df):
                                              'weekend', 'bType', 'sPlaceNumber', 'ePlaceNumber'])
     
     return dfTrip
+
+
 
 # preprocess the raw nextbike data with basic data cleaning techniques for creation of fixed stations
 def preprocessStationData(df):
