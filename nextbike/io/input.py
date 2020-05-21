@@ -252,7 +252,7 @@ def drop_outliers(df):
             mean = meanTripLengthPerDay.get(date)
             std = stdTripLengthPerDay.get(date)
         # drop outliers that are not within the range of mean +- 2x standard deviation
-        if (row['durationInSec'] < (mean - 2 * std) or row['durationInSec'] > (mean + 2 * std)):
+        if (row['durationInSec'] < (mean - 1 * std) or row['durationInSec'] > (mean + 1 * std)):
             indexList.append(index)
 
     df.drop(indexList, inplace=True)
