@@ -5,6 +5,9 @@ import pickle
 import numpy as np
 import datetime
 
+
+#region read-in
+
 # load raw nextbike data as csv file from designated directory
 def read_file(path=os.path.join(get_data_path(), "input/inputData.csv")):
     try:
@@ -46,7 +49,9 @@ def readFinalTrips(path=os.path.join(get_data_path(), "input/trips.csv")):
     except FileNotFoundError:
         print("Data file not found. Path was " + path) 
 
+#endregion
 
+#region datapreparation
 def getWeatherData():
     # load temperature and precipitation data
     dfTemperature = read_tempData()
@@ -90,6 +95,21 @@ def preprocessData(df):
     df['p_number'] = df.p_number.astype('int64')
 
     return df
+
+
+# preprocess the raw nextbike data with basic data cleaning techniques for creation of fixed stations
+def preprocessStationData(df):
+    df = df[['datetime', 'p_bikes', 'p_number']]
+    df = df[df['p_number'] != 0]
+    df['datetime'] = pd.to_datetime(df['datetime'])
+    df = df[df['p_number'].notna()]
+    df['p_number'] = df['p_number'].astype('int64')
+    
+    return df
+
+#endregion
+
+#region create dataframes
 
 # create dataframe with number, name and coordinates of fixed stations
 def createStations(df):
@@ -190,16 +210,50 @@ def createTrips(df):
     return dfTrip
 
 
+#Create a DF contains date and trips per date plus weather data
+def createTripsPerDay(dfTrips,dfWeather):
 
-# preprocess the raw nextbike data with basic data cleaning techniques for creation of fixed stations
-def preprocessStationData(df):
-    df = df[['datetime', 'p_bikes', 'p_number']]
-    df = df[df['p_number'] != 0]
-    df['datetime'] = pd.to_datetime(df['datetime'])
-    df = df[df['p_number'].notna()]
-    df['p_number'] = df['p_number'].astype('int64')
-    
-    return df
+    #Prepare delivered dataframes
+    dfWeather = dfWeather.reset_index()
+    dfWeather['date'] = pd.to_datetime(dfWeather['date'])
+    dfWeather['sDate'] = dfWeather['date'].dt.date
+    dfWeather.drop('date',axis=1,inplace=True)
+
+    dfTrips['sDate'] = dfTrips['sTime'].dt.date
+
+    #Create a df with date as key and # of trips per day
+    tripsPerDay = []
+
+    for date in dfTrips['sDate'].unique():
+        tripsPerDay.append([date,len(dfTrips[dfTrips['sDate']==date])])
+
+    tripsPerDay = pd.DataFrame(tripsPerDay,columns=['date','tripsPerDay'])
+
+    #Create a df with date as key and weather data
+    weatherPerDay = []
+
+    for date in dfWeather['sDate'].unique():
+        df=dfWeather[dfWeather['sDate']==date]
+        weatherPerDay.append([date,df['temperature'].max(),df['temperature'].mean(),df['temperature'].min(),df['precipitation'].mean()])
+
+    weatherPerDay = pd.DataFrame(weatherPerDay,columns=['date','temperatureMAX','temperatureAVG','temperatureMIN','precipitationAVG'])
+
+    #Join both on key
+    mergedDf = tripsPerDay.join(weatherPerDay.set_index('date'), on='date')
+    mergedDf['date'] = pd.to_datetime(mergedDf['date'])
+
+    #create new features
+    mergedDf['day'] = mergedDf['date'].dt.day
+    mergedDf['month'] = mergedDf['date'].dt.month
+    mergedDf['dayOfWeek'] = mergedDf['date'].dt.dayofweek
+
+    mergedDf.drop(['date'],axis=1,inplace=True)
+    mergedDf.dropna(inplace=True)
+    dfTripsPerDay = mergedDf
+
+    return dfTripsPerDay
+
+
 
 # create a datetime index based on minutes as intervall which contains the available number of bikes per fixed station
 def createBikeNumberPerStationIndex(df):
@@ -222,6 +276,9 @@ def createBikeNumberPerStationIndex(df):
     dfStations = dfStations.astype('int64')
 
     return dfStations
+
+
+
 
 def read_model():
     path = os.path.join(get_data_path(), "output/model.pkl")
