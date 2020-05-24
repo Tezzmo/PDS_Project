@@ -198,10 +198,10 @@ def createTrips(df):
             savedRow['b_number'] = -1
     
     # print rows with errors
-    if len(errorlines) > 0:
-        print('Error at lines:')
-        for line in errorlines:
-            print(line)
+    # if len(errorlines) > 0:
+    #     print('Error at lines:')
+    #     for line in errorlines:
+    #         print(line)
     
     # create dataframe out of list
     dfTrip = pd.DataFrame(tripList, columns=['bNumber', 'sTime', 'eTime', 'duration', 'sLong', 'sLat', 'eLong', 'eLat',
@@ -254,7 +254,6 @@ def createTripsPerDay(dfTrips,dfWeather):
     return dfTripsPerDay
 
 
-
 # create a datetime index based on minutes as intervall which contains the available number of bikes per fixed station
 def createBikeNumberPerStationIndex(df):
     dfStations = pd.DataFrame({'datetime': pd.date_range('2019-01-01', '2020-01-01', freq='min', closed='left')})
@@ -278,8 +277,6 @@ def createBikeNumberPerStationIndex(df):
     return dfStations
 
 
-
-
 def read_model():
     path = os.path.join(get_data_path(), "output/model.pkl")
     with open(path, "rb") as f:
@@ -288,30 +285,44 @@ def read_model():
 
 # drop outliers
 def drop_outliers(df):
+    
     # add column with durationInSec
     df["durationInSec"] = df["duration"].dt.total_seconds().astype(int)
-
-    # calculate mean and standard deviation for each day
+    
+    # calculate mean and standard deviation for each day and month
     meanTripLengthPerDay = (df.groupby(df.sTime.dt.date).durationInSec.mean(numeric_only=False)).to_dict()
     stdTripLengthPerDay = (df.groupby(df.sTime.dt.date).durationInSec.std()).to_dict()
-
+    meanTripLengthPerMonth = (df.groupby(df.sTime.dt.month).durationInSec.mean(numeric_only=False)).to_dict()
+    stdTripLengthPerMonth = (df.groupby(df.sTime.dt.month).durationInSec.std()).to_dict()
+    
     # initialize data
     date = datetime.date(2019, 1, 20)
-    mean = meanTripLengthPerDay.get(date)
-    std = stdTripLengthPerDay.get(date)
+    month = date.month
+    meanDay = meanTripLengthPerDay.get(date)
+    stdDay = stdTripLengthPerDay.get(date)
+    meanMonth = meanTripLengthPerMonth.get(month)
+    stdMonth = stdTripLengthPerMonth.get(month)
     indexList = []
-
+    
     for index, row in df.iterrows():
+        
         newDate = row['sTime'].date()
+        
         # check if new mean and std need to be loaded
         if (newDate != date):
             date = newDate
-            mean = meanTripLengthPerDay.get(date)
-            std = stdTripLengthPerDay.get(date)
-        # drop outliers that are not within the range of mean +- 2x standard deviation
-        if (row['durationInSec'] < (mean - 1 * std) or row['durationInSec'] > (mean + 1 * std)):
+            month = date.month
+            meanDay = meanTripLengthPerDay.get(date)
+            stdDay = stdTripLengthPerDay.get(date)
+            meanMonth = meanTripLengthPerMonth.get(month)
+            stdMonth = stdTripLengthPerMonth.get(month)
+        
+        # drop outliers that are not within the range of mean +- standard deviation
+        if (row['durationInSec'] < (meanMonth - 0.5 * stdMonth) or row['durationInSec'] > (meanMonth + 0.5 * stdMonth)):
             indexList.append(index)
-
+        elif (row['durationInSec'] < (meanDay - 1 * stdDay) or row['durationInSec'] > (meanDay + 1 * stdDay)):
+            indexList.append(index)
+    
     df.drop(indexList, inplace=True)
-
+    
     return df

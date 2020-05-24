@@ -144,3 +144,5 @@ notebooks/dataExplorationJonas.ipynb
 .idea/
 data/output/StationData.csv
 data/output/StationBikeNumberData.csv
+data/input/trips.csv
+notebooks/trips.csv
