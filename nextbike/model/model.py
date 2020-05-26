@@ -116,10 +116,21 @@ def predictTripDirection(df):
     X = pd.concat([X, sPlace], axis=1)
     X.dropna(inplace=True)
 
-    st_scaler = pickle.load(open("st_scaler", 'rb'))
-    pca = pickle.load(open("pca", 'rb'))
-    knn = pickle.load(open("knn", 'rb'))
+    try:
+        st_scaler = pickle.load(open("st_scaler", 'rb'))
+    except FileNotFoundError:
+        return "Standard Scaler not found. Please train a model first."
 
+    try:
+        pca = pickle.load(open("pca", 'rb'))
+    except FileNotFoundError:
+        return "Principal Component Analysis not found. Please train a model first."
+
+    try:
+        knn = pickle.load(open("knn", 'rb'))
+    except FileNotFoundError:
+        return "K-Nearest Neighbor not found. Please train a model first."
+    
     X_scaled = st_scaler.transform(X)
     X_scaled = pca.transform(X_scaled)
     y_pred = knn.predict(X_scaled)
