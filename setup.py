@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='PDS_Project',
-    version='0.0.1.dev14',
+    version='0.0.1.dev15',
     description="Semester Project - Programming Data Science",
     author="Student",
     author_email="student@uni-koeln.de",
