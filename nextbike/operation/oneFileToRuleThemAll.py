@@ -98,11 +98,12 @@ def rebuild():
 
     #Save data
     #Pfad anpassen !!!  --> Muss in input speichern
-    dfWeather.to_csv("dfWeather_Saved.csv", sep=';')
-    dfTrips.to_csv("dfTrips_Saved.csv", sep=';', index=False)
-    dfStations.to_csv("dfStations_Saved.csv", sep=';')
-    dfBikesPerStationIndex.to_csv("dfBikesPerStationIndex_Saved.csv", sep=';')
-    dfTripsPerDay.to_csv("dfTripsPerDay_Saved.csv", sep=';', index=False)
+
+    nextbike.io.save_WeatherForReues(dfWeather)
+    nextbike.io.readSavedTrips(dfTrips)
+    nextbike.io.save_StationData(dfStations)
+    nextbike.io.save_StationBikeNumberData(dfBikesPerStationIndex)
+    nextbike.io.save_tripsPerDayForReues(dfTripsPerDay)
 
     return dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay
 
