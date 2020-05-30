@@ -1,28 +1,17 @@
-#%%
-!pip install -e ..
-
-# %%
 import nextbike
 import datetime
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_absolute_error
-from sklearn.preprocessing import PolynomialFeatures
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import r2_score
 from sklearn.metrics import mean_squared_error
-import tensorflow as tf
-from tensorflow import keras
-from tensorflow.keras import layers
-from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.datasets import make_regression
-import matplotlib.pyplot as plt
 from sklearn.model_selection import RandomizedSearchCV
 
-def retrainModel(dfdfTripsPerDay, optimalHyperparameterTest):
+def retrainModel(dfTripsPerDay, optimalHyperparameterTest):
 
     ###First filter for outliers
     #Get standart deviation of trips per day
@@ -57,21 +46,24 @@ def retrainModel(dfdfTripsPerDay, optimalHyperparameterTest):
     oneWeekEarlier = list(dfTripsPerDayFilterd['date_oneWeekAgo'].unique())
 
     #Try/except is necessary, because of the outlier drop 
-    for i,date in enumerate(dfTripsPerDayFilterd['date'].unique()):
+    for date in lastDay:
         try:
-            valueDay = dfTripsPerDayFilterd[dfTripsPerDayFilterd['date'] == lastDay[i]]['tripsPerDay'].values[0]
+            valueDay = dfTripsPerDayFilterd[dfTripsPerDayFilterd['date'] == date]['tripsPerDay'].values[0]
         except:
             valueDay = None
 
+        tripsLastDay.append(valueDay)
+
+
+    for date in oneWeekEarlier:
         try:
-            valueWeek = dfTripsPerDayFilterd[dfTripsPerDayFilterd['date'] == oneWeekEarlier[i]]['tripsPerDay'].values[0]
+            valueWeek = dfTripsPerDayFilterd[dfTripsPerDayFilterd['date'] == date]['tripsPerDay'].values[0]
         except:
             valueWeek = None
 
+        tripsOneWeekAgo.append(valueWeek)
 
-    tripsLastDay.append(valueDay)
-    tripsOneWeekAgo.append(valueWeek)
-
+    
     #Fill in created features
     dfTripsPerDayFilterd['tripsLastDay'] = tripsLastDay
     dfTripsPerDayFilterd['tripsOneWeekAgo'] = tripsOneWeekAgo
