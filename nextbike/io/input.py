@@ -34,7 +34,24 @@ def read_precData(path=os.path.join(get_data_path(), "input/precipitation.txt"))
 
 
 
-def readFinalTrips(path=os.path.join(get_data_path(), "input/trips.csv")):
+###
+#Read in saved dataframes
+
+def readSavedWeather(path=os.path.join(get_data_path(), "input/dfWeather_Saved.csv")):
+    try:
+        df = pd.read_csv(path, sep=';')
+
+        df['date'] = pd.to_datetime(df['date'])
+        df.set_index('date', inplace = True)
+
+        return df
+
+    except FileNotFoundError:
+        print("Data file not found. Path was " + path) 
+
+
+
+def readSavedTrips(path=os.path.join(get_data_path(), "input/dfTrips_Saved.csv")):
     try:
         df = pd.read_csv(path, sep=';')
 
@@ -44,10 +61,40 @@ def readFinalTrips(path=os.path.join(get_data_path(), "input/trips.csv")):
    
         df.drop('Unnamed: 0',axis=1,inplace=True)
 
-
         return df
+
     except FileNotFoundError:
         print("Data file not found. Path was " + path) 
+
+
+def readSavedTripsPerDay(path=os.path.join(get_data_path(), "input/dfTripsPerDay_Saved.csv")):
+    try:
+        df = pd.read_csv(path, sep=';')
+        df['date'] = pd.to_datetime(df['date'])
+        return df
+    
+    except FileExistsError:
+        print("Data file not found. Path was " + path)
+
+
+def readSavedStations(path=os.path.join(get_data_path(), "input/dfStations_Saved.csv")):
+    try:
+        df = pd.read_csv(path, sep=';')
+        return df
+    
+    except FileExistsError:
+        print("Data file not found. Path was " + path)
+
+
+def readSavedBikesPerStation(path=os.path.join(get_data_path(), "input/dfBikesPerStationIndex_Saved.csv")):
+    try:
+        df = pd.read_csv(path, sep=';')
+        df['datetime'] = pd.to_datetime(df['datetime'])
+        df.set_index('datetime', inplace = True)
+        return df
+    
+    except FileExistsError:
+        print("Data file not found. Path was " + path)
 
 #endregion
 
@@ -86,7 +133,7 @@ def getWeatherData():
 def preprocessData(df):
     # drop empty rows and unneccessary columns
     df.dropna(inplace=True)
-    df.drop(columns=['Unnamed: 0', 'p_spot', 'p_place_type', 'p_uid', 'p_bikes', 'p_bike'], inplace=True)
+    df.drop(columns=['Unnamed: 0', 'p_spot', 'p_place_type','p_uid'], inplace=True)
 
     # drop rows which are not a start or end of a trip
     df = df[(df['trip'] == 'start') |  (df['trip'] == 'end')]
@@ -247,7 +294,6 @@ def createTripsPerDay(dfTrips,dfWeather):
     mergedDf['month'] = mergedDf['date'].dt.month
     mergedDf['dayOfWeek'] = mergedDf['date'].dt.dayofweek
 
-    mergedDf.drop(['date'],axis=1,inplace=True)
     mergedDf.dropna(inplace=True)
     dfTripsPerDay = mergedDf
 

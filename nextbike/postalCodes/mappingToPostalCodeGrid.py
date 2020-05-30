@@ -9,10 +9,10 @@ import os
 
 
 
-def assignPostalCode(dfInput):
+def assignPostalCode(dfTrips):
 
     #Get only Coorinates
-    dfWithPostalCode = dfInput
+    dfWithPostalCode = dfTrips
 
     #Load NN-Classifier
     path = path=os.path.join(get_ml_path(), "postalCode/nearestNeighbor_PostalCode.pkl")
@@ -22,4 +22,13 @@ def assignPostalCode(dfInput):
 
     return dfWithPostalCode
     
+
+
+def filterForPostalCodes(dfTrips):
+
+    #Only use trips which start and end in marburg
+    dfFilteredTrips = dfTrips[(dfTrips['sPostalCode'] == 35037)|(dfTrips['sPostalCode'] == 35039)|(dfTrips['sPostalCode'] == 35041)|(dfTrips['sPostalCode'] == 35043)]
+    dfFilteredTrips = dfFilteredTrips[(dfTrips['ePostalCode'] == 35037)|(dfTrips['ePostalCode'] == 35039)|(dfTrips['ePostalCode'] == 35041)|(dfTrips['ePostalCode'] == 35043)]
+
+    return dfFilteredTrips
 
