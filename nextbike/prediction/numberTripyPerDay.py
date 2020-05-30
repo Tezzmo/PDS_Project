@@ -11,7 +11,7 @@ from sklearn.metrics import mean_squared_error
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import RandomizedSearchCV
 
-def retrainModel(dfTripsPerDay, optimalHyperparameterTest):
+def retrainModel_NumberOfTrips(dfTripsPerDay, optimalHyperparameterTest):
 
     ###First filter for outliers
     #Get standart deviation of trips per day
@@ -175,8 +175,10 @@ def retrainModel(dfTripsPerDay, optimalHyperparameterTest):
 
     return reg,sscaler
 
+def loadModel_NumberOfTrips():
+    pass
 
-def predict(df, regressor, sscaler):
+def predict_NumberOfTrips(df, regressor, sscaler):
 
     dfSalced = sscaler.transform(df)
     prediction = regressor.predict(dfSalced)

@@ -185,9 +185,9 @@ def prediction(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay
             userInput2 = input("<y,n>")
                 
             if userInput2.upper() == 'Y':
-                    nextbike.prediction.retrainModel(dfTripsPerDay,True)
+                    nextbike.prediction.retrainModel_NumberOfTrips(dfTripsPerDay,True)
             else:
-                nextbike.prediction.retrainModel(dfTripsPerDay,False)
+                nextbike.prediction.retrainModel_NumberOfTrips(dfTripsPerDay,False)
 
         else:
             pass
