@@ -26,7 +26,7 @@ def mainMenue(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay)
         menueVisualization(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay)
 
     elif userInteraction == '2':
-        menueVisualization(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay)
+        menuePrediction(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay)
 
     else:
         print("Invalied Input")
@@ -51,6 +51,20 @@ def menueVisualization(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTri
         
 
 
+
+def menuePrediction(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay):
+
+    print("What are you interested in? \n 1 - Tripduration \n 2 - Number of Trips \n 3 - Number of Trips  \n 4 - Go back")
+    userInteraction = input("Choose a number <1 - 4>")
+    userInteraction = int(userInteraction)
+
+    if userInteraction in [1,2,3]:
+        prediction(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,userInteraction)
+    elif userInteraction == 4:
+        mainMenue(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay)
+    else:
+        print("Invalid input")
+        menueVisualization(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay)
 
 
 
@@ -150,5 +164,32 @@ def visualize(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,
                 break
 
     menueVisualization(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay)
+
+
+
+
+def prediction(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,type):
+
+    if type == 1:
+        pass
+
+    elif type == 2:
+        pass
+
+    elif type == 3:
+        print("Do you want to 1 - retrain the model or 2 - load a existing?")
+        userInput = int(input("<1,2>"))
+
+        if userInput == 1:
+            print("Do you want to use Hyperparameteroptimization?")
+            userInput2 = input("<y,n>")
+                
+            if userInput2.upper() == 'Y':
+                    nextbike.prediction.retrainModel(dfTripsPerDay,True)
+            else:
+                nextbike.prediction.retrainModel(dfTripsPerDay,False)
+
+        else:
+            pass
 
 

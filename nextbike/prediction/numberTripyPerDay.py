@@ -171,9 +171,9 @@ def retrainModel(dfTripsPerDay, optimalHyperparameterTest):
     #Scale the Data
     sscaler = StandardScaler()
     xScaled = sscaler.fit_transform(X)
-    reg.fit(xScaled)
+    reg.fit(xScaled,Y)
 
-    return reg,scaler,sscaler
+    return reg,sscaler
 
 
 def predict(df, regressor, sscaler):
