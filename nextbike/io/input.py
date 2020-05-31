@@ -234,14 +234,19 @@ def drop_outliers(df):
     # add column with durationInSec
     df["durationInSec"] = df["duration"].dt.total_seconds().astype(int)
 
-    # calculate mean and standard deviation for each day
+    # calculate mean and standard deviation for each day and month
     meanTripLengthPerDay = (df.groupby(df.sTime.dt.date).durationInSec.mean(numeric_only=False)).to_dict()
     stdTripLengthPerDay = (df.groupby(df.sTime.dt.date).durationInSec.std()).to_dict()
+    meanTripLengthPerMonth = (df.groupby(df.sTime.dt.month).durationInSec.mean(numeric_only=False)).to_dict()
+    stdTripLengthPerMonth = (df.groupby(df.sTime.dt.month).durationInSec.std()).to_dict()
 
     # initialize data
     date = datetime.date(2019, 1, 20)
-    mean = meanTripLengthPerDay.get(date)
-    std = stdTripLengthPerDay.get(date)
+    month = date.month
+    meanDay = meanTripLengthPerDay.get(date)
+    stdDay = stdTripLengthPerDay.get(date)
+    meanMonth = meanTripLengthPerMonth.get(month)
+    stdMonth = stdTripLengthPerMonth.get(month)
     indexList = []
 
     for index, row in df.iterrows():
@@ -249,12 +254,17 @@ def drop_outliers(df):
         # check if new mean and std need to be loaded
         if (newDate != date):
             date = newDate
-            mean = meanTripLengthPerDay.get(date)
-            std = stdTripLengthPerDay.get(date)
+            month = date.month
+            meanDay = meanTripLengthPerDay.get(date)
+            stdDay = stdTripLengthPerDay.get(date)
+            meanMonth = meanTripLengthPerMonth.get(month)
+            stdMonth = stdTripLengthPerMonth.get(month)
         # drop outliers that are not within the range of mean +- 2x standard deviation
-        if (row['durationInSec'] < (mean - 2 * std) or row['durationInSec'] > (mean + 2 * std)):
+        if (row['durationInSec'] < (meanDay - 1 * stdDay) or row['durationInSec'] > (meanDay + 1 * stdDay)):
+            indexList.append(index)
+        elif (row['durationInSec'] < (meanMonth - 0.5 * stdMonth) or row['durationInSec'] > (meanMonth + 0.5 * stdMonth)):
             indexList.append(index)
 
     df.drop(indexList, inplace=True)
-
+    
     return df
