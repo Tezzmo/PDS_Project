@@ -8,7 +8,7 @@ def start():
 
     if userInteraction == '1':
         print('Start to rebuild the model, this will take several minutes')
-        dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay = rebuildModel()
+        dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay = rebuild()
     else:
         print('Start to load all data')
         dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay = useExisting()
