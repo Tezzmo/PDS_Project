@@ -359,6 +359,7 @@ def drop_outliers(df):
             meanMonth = meanTripLengthPerMonth.get(month)
             stdMonth = stdTripLengthPerMonth.get(month)
 
+
         # drop outliers that are not within the range of mean +- standard deviation
         if (row['durationInSec'] < (meanMonth - 0.5 * stdMonth) or row['durationInSec'] > (meanMonth + 0.5 * stdMonth)):
             indexList.append(index)
@@ -368,3 +369,4 @@ def drop_outliers(df):
     df.drop(indexList, inplace=True)
 
     return df
+
