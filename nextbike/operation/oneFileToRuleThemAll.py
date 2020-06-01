@@ -1,5 +1,5 @@
 import nextbike
-import pandas as pd
+import datetime
 
 def start():
 
@@ -139,8 +139,17 @@ def visualize(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,
         nextbike.visualization.visualizeDistributionOfTripsPerMonth(dfTrips).show()
 
     elif type == 4:
-        nextbike.visualization.visualizeNumberOfBikesPerStationMap(pointInTime, dfStations, dfStationBikeNumber).show()
-        nextbike.visualization.visualizeNumberOfBikesPerStationBarplot(pointInTime, dfStations, dfStationBikeNumber).show()
+        year = 2019
+        month = int(input("Chose a month <1-12>"))
+        day = int(input("Chose a day"))
+        hour = int(input("Chose a hour <0-23>"))
+        minute = int(input("Chose a minute <0-59>"))
+        secound = 0
+
+        pointInTime = datetime.datetime(year,month,day,hour,minute,secound)
+
+        nextbike.visualization.visualizeNumberOfBikesPerStationMap(pointInTime, dfStations, dfBikesPerStationIndex).show()
+        nextbike.visualization.visualizeNumberOfBikesPerStationBarplot(pointInTime, dfStations, dfBikesPerStationIndex).show()
 
     elif type == 5:
         nextbike.visualization.visualizeWeatherData(dfWeather).show()
