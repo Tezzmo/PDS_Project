@@ -73,19 +73,6 @@ def retrainModel_NumberOfTrips(dfTripsPerDay, optimalHyperparameterTest):
     dfTripsPerDayFilterd.drop(['date','date_yesterday','date_oneWeekAgo'],axis=1,inplace=True)
     dfTripsPerDayFilterd.drop(['day','month'],axis=1,inplace=True)
 
-
-    #Split into Week and Weekend
-    dfTripsPerDayWeek = dfTripsPerDayFilterd[(dfTripsPerDayFilterd['dayOfWeek']==0)|(dfTripsPerDayFilterd['dayOfWeek']==1)|(dfTripsPerDayFilterd['dayOfWeek']==2)|(dfTripsPerDayFilterd['dayOfWeek']==3)|(dfTripsPerDayFilterd['dayOfWeek']==4)|(dfTripsPerDayFilterd['dayOfWeek']==5)]
-    dfTripsPerDayWeekend = dfTripsPerDayFilterd[(dfTripsPerDayFilterd['dayOfWeek']==5)|(dfTripsPerDayFilterd['dayOfWeek']==6)]
-
-    YWeek= dfTripsPerDayWeek['tripsPerDay']
-    XWeek = dfTripsPerDayWeek.drop('tripsPerDay',axis=1).values
-
-    YWeekEnd= dfTripsPerDayWeekend['tripsPerDay']
-    XWeekEnd = dfTripsPerDayWeekend.drop('tripsPerDay',axis=1).values
-
-
-    ################################################################### Choose 
     #Make a train test split
     Y = dfTripsPerDayFilterd['tripsPerDay']
     X = dfTripsPerDayFilterd.drop('tripsPerDay',axis=1).values
@@ -146,11 +133,17 @@ def retrainModel_NumberOfTrips(dfTripsPerDay, optimalHyperparameterTest):
 
     #Evaluate the model based on the train test split
     y_pred_test = reg.predict(x_test)
-    err = mean_absolute_error(y_test, y_pred_test)
-    err_mse = mean_squared_error(y_test, y_pred_test)
-    err_r2 = r2_score(y_test, y_pred_test)
+    errTest = mean_absolute_error(y_test, y_pred_test)
+    err_mseTest = mean_squared_error(y_test, y_pred_test)
+    err_r2Test = r2_score(y_test, y_pred_test)
 
-    print("MSE: ",err,"MAE: ",err_mse,"R^2: ",err_r2)
+    y_pred_train = reg.predict(x_train)
+    errTrain = mean_absolute_error(y_train, y_pred_train)
+    err_mseTrain = mean_squared_error(y_train, y_pred_train)
+    err_r2Train = r2_score(y_train, y_pred_train)
+
+    print("Test  :  ","MAE: ",errTest,"MSE: ",err_mseTest,"R^2: ",err_r2Test)
+    print("Train :  ","MAE: ",errTrain,"MSE: ",err_mseTrain,"R^2: ",err_r2Train)
 
     #Visualize the Prediction
     day = []

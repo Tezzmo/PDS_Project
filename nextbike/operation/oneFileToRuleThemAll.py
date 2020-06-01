@@ -1,4 +1,5 @@
 import nextbike
+import pandas as pd
 
 def start():
 
@@ -19,7 +20,7 @@ def start():
 
 def mainMenue(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay):
 
-    print("Your options: \n1 - Visualize \n2 - Predict")
+    print("Your options: \n1 - Visualize \n2 - Predict \n3 - End")
     userInteraction = input("Press 1 or 2") 
 
     if userInteraction == '1':
@@ -27,6 +28,9 @@ def mainMenue(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay)
 
     elif userInteraction == '2':
         menuePrediction(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay)
+
+    elif userInteraction == '3':
+        pass
 
     else:
         print("Invalied Input")
@@ -41,7 +45,7 @@ def menueVisualization(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTri
     userInteraction = input("Choose a number <1 - 6>")
     userInteraction = int(userInteraction)
 
-    if userInteraction in [1,2,3,4,5,5]:
+    if userInteraction in [1,2,3,4,5,6]:
         visualize(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,userInteraction)
     elif userInteraction == 6:
         mainMenue(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay)
@@ -98,6 +102,7 @@ def rebuild():
     print("Assign postalCode   -- 60%")
     dfTrips = nextbike.postalCodes.assignPostalCode(dfTrips)
     dfTrips = nextbike.postalCodes.filterForPostalCodes(dfTrips)
+    
 
     #Create station data
     print("Get station data   -- 80%")
@@ -112,11 +117,11 @@ def rebuild():
 
     #Save data
     #Pfad anpassen !!!  --> Muss in input speichern
-
+    print("Save Dataframes")
     nextbike.io.save_WeatherForReues(dfWeather)
-    nextbike.io.readSavedTrips(dfTrips)
-    nextbike.io.save_StationData(dfStations)
-    nextbike.io.save_StationBikeNumberData(dfBikesPerStationIndex)
+    nextbike.io.save_tripDataForReues(dfTrips)
+    nextbike.io.save_StationDataForReues(dfStations)
+    nextbike.io.save_dfBikesPerStationIndexForReues(dfBikesPerStationIndex)
     nextbike.io.save_tripsPerDayForReues(dfTripsPerDay)
 
     return dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay

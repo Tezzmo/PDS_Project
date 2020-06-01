@@ -59,8 +59,6 @@ def readSavedTrips(path=os.path.join(get_data_path(), "input/dfTrips_Saved.csv")
         df['eTime'] = pd.to_datetime(df['eTime'])
         df['duration'] = pd.to_timedelta(df['duration'])
 
-        df.drop('Unnamed: 0',axis=1,inplace=True)
-
         return df
 
     except FileNotFoundError:
@@ -266,13 +264,11 @@ def createTripsPerDay(dfTrips,dfWeather):
     dfWeather['sDate'] = dfWeather['date'].dt.date
     dfWeather.drop('date',axis=1,inplace=True)
 
-    dfTrips['sDate'] = dfTrips['sTime'].dt.date
-
     #Create a df with date as key and # of trips per day
     tripsPerDay = []
 
-    for date in dfTrips['sDate'].unique():
-        tripsPerDay.append([date,len(dfTrips[dfTrips['sDate']==date])])
+    for date in dfTrips['sTime'].dt.date.unique():
+        tripsPerDay.append([date,len(dfTrips[dfTrips['sTime'].dt.date==date])])
 
     tripsPerDay = pd.DataFrame(tripsPerDay,columns=['date','tripsPerDay'])
 
