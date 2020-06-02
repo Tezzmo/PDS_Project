@@ -14,6 +14,13 @@ def save_tripData(df, path=os.path.join(get_data_path(), "output/tripData.csv"))
     except:
         print("Data file could not be saved. Path was " + path)
 
+# save generated StationBikerNumberData as csv file to designated data directory
+def save_StationBikeNumberData(df, path=os.path.join(get_data_path(), "output/StationBikeNumberData.csv")):
+    try:
+        df.to_csv(path)
+    except:
+        print("Data file could not be saved. Path was " + path)
+
 # save generated StationData as csv file to designated data directory
 def save_StationData(df, path=os.path.join(get_data_path(), "output/StationData.csv")):
     try:
