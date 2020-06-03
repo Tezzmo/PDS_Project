@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<head>    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    
+        <script>
+            L_NO_TOUCH = false;
+            L_DISABLE_3D = false;
+        </script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.5.1/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.5.1/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://rawcdn.githack.com/python-visualization/folium/master/folium/templates/leaflet.awesome.rotate.css"/>
+    <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
+    <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_81481fd4d7644eb790d24bf91f628fd9 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+            </style>
+        
+</head>
+<body>    
+    
+                <div style="position: fixed; bottom: 50px; left: 50px; width: 150px; height: 130px; border:2px solid grey; z-index:9999; font-size:14px; background-color: white">
+                &nbsp; <b>Color Legend</b><br>
+                &nbsp; <text style='color: #ff0000;'>00 - 10 bikes/station</text><br>
+                &nbsp; <text style='color: #e4e400;'>11 - 20 bikes/station</text><br>
+                &nbsp; <text style='color: #008000;'>21 - 30 bikes/station</text><br>
+                &nbsp; <text style='color: #1e90ff;'>31 - 40 bikes/station</text><br>
+                &nbsp; <text style='color: #0000ff;'>41 - 50 bikes/station</text><br>
+                </div>
+                
+    
+            <div class="folium-map" id="map_81481fd4d7644eb790d24bf91f628fd9" ></div>
+        
+</body>
+<script>    
+    
+            var map_81481fd4d7644eb790d24bf91f628fd9 = L.map(
+                "map_81481fd4d7644eb790d24bf91f628fd9",
+                {
+                    center: [50.8008, 8.7667],
+                    crs: L.CRS.EPSG3857,
+                    zoom: 13,
+                    zoomControl: true,
+                    preferCanvas: false,
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_deff18cd8e7f43eb819d94800802104e = L.tileLayer(
+                "https://stamen-tiles-{s}.a.ssl.fastly.net/toner/{z}/{x}/{y}.png",
+                {"attribution": "Map tiles by \u003ca href=\"http://stamen.com\"\u003eStamen Design\u003c/a\u003e, under \u003ca href=\"http://creativecommons.org/licenses/by/3.0\"\u003eCC BY 3.0\u003c/a\u003e. Data by \u0026copy; \u003ca href=\"http://openstreetmap.org\"\u003eOpenStreetMap\u003c/a\u003e, under \u003ca href=\"http://www.openstreetmap.org/copyright\"\u003eODbL\u003c/a\u003e.", "detectRetina": false, "maxNativeZoom": 18, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            ).addTo(map_81481fd4d7644eb790d24bf91f628fd9);
+        
+    
+            var circle_marker_2e4beed14f25409d8bec0cf180cb90d4 = L.circleMarker(
+                [50.816058, 8.772242],
+                {"bubblingMouseEvents": true, "color": "#ff0000", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff0000", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "stroke": true, "weight": 3}
+            ).addTo(map_81481fd4d7644eb790d24bf91f628fd9);
+        
+    
+        var popup_d1f963701e6f4d6aa90645959e14b396 = L.popup({"maxWidth": "100%"});
+
+        
+            var html_4d3b9b433be44420b715adf6aa41e72e = $(`<div id="html_4d3b9b433be44420b715adf6aa41e72e" style="width: 100.0%; height: 100.0%;">Anatomie</div>`)[0];
+            popup_d1f963701e6f4d6aa90645959e14b396.setContent(html_4d3b9b433be44420b715adf6aa41e72e);
+        
+
+        circle_marker_2e4beed14f25409d8bec0cf180cb90d4.bindPopup(popup_d1f963701e6f4d6aa90645959e14b396)
+        ;
+
+        
+    
+    
+            var circle_marker_6856f813f57a4fe28d77751da7805b15 = L.circleMarker(
+                [50.81395, 8.766160000000001],
+                {"bubblingMouseEvents": true, "color": "#ff0000", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff0000", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "stroke": true, "weight": 3}
+            ).addTo(map_81481fd4d7644eb790d24bf91f628fd9);
+        
+    
+        var popup_672dbf48be2243799bfa533b18072964 = L.popup({"maxWidth": "100%"});
+
+        
+            var html_be95015ef0e84e539409cd5ebe40b5b2 = $(`<div id="html_be95015ef0e84e539409cd5ebe40b5b2" style="width: 100.0%; height: 100.0%;">Ketzerbach/Zwischenhausen</div>`)[0];
+            popup_672dbf48be2243799bfa533b18072964.setContent(html_be95015ef0e84e539409cd5ebe40b5b2);
+        
+
+        circle_marker_6856f813f57a4fe28d77751da7805b15.bindPopup(popup_672dbf48be2243799bfa533b18072964)
+        ;
+
+        
+    
+    
+            var circle_marker_a3cbad2f62714c7abbb7ffe5a3fc757b = L.circleMarker(
+                [50.80327, 8.76406],
+                {"bubblingMouseEvents": true, "color": "#ff0000", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff0000", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "stroke": true, "weight": 3}
+            ).addTo(map_81481fd4d7644eb790d24bf91f628fd9);
+        
+    
+        var popup_30c7964e4217479c8909b5f3f11c78ca = L.popup({"maxWidth": "100%"});
+
+        
+            var html_84651696f0f64280b551b8054cf90b42 = $(`<div id="html_84651696f0f64280b551b8054cf90b42" style="width: 100.0%; height: 100.0%;">Friedrichplatz</div>`)[0];
+            popup_30c7964e4217479c8909b5f3f11c78ca.setContent(html_84651696f0f64280b551b8054cf90b42);
+        
+
+        circle_marker_a3cbad2f62714c7abbb7ffe5a3fc757b.bindPopup(popup_30c7964e4217479c8909b5f3f11c78ca)
+        ;
+
+        
+    
+    
+            var circle_marker_9c2de9610fee4e0d99d13c070d8e839e = L.circleMarker(
+                [50.7947, 8.77223],
+                {"bubblingMouseEvents": true, "color": "#ff0000", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff0000", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "stroke": true, "weight": 3}
+            ).addTo(map_81481fd4d7644eb790d24bf91f628fd9);
+        
+    
+        var popup_e5f43c56684d4b138eee07b62c9b72e2 = L.popup({"maxWidth": "100%"});
+
+        
+            var html_31f08cf4a06a4129b484da44e2931d2a = $(`<div id="html_31f08cf4a06a4129b484da44e2931d2a" style="width: 100.0%; height: 100.0%;">Interkulturelle Gaerten/ Am Richtsberg</div>`)[0];
+            popup_e5f43c56684d4b138eee07b62c9b72e2.setContent(html_31f08cf4a06a4129b484da44e2931d2a);
+        
+
+        circle_marker_9c2de9610fee4e0d99d13c070d8e839e.bindPopup(popup_e5f43c56684d4b138eee07b62c9b72e2)
+        ;
+
+        
+    
+    
+            var circle_marker_e8bdf14517bf4731a721580b72cf2b24 = L.circleMarker(
+                [50.814655, 8.771212],
+                {"bubblingMouseEvents": true, "color": "#ff0000", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff0000", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 1, "stroke": true, "weight": 3}
+            ).addTo(map_81481fd4d7644eb790d24bf91f628fd9);
+        
+    
+        var popup_4924ec4c96f74383b3ac5d645930a574 = L.popup({"maxWidth": "100%"});
+
+        
+            var html_9c79bb2f14cf4277b3892e491069e799 = $(`<div id="html_9c79bb2f14cf4277b3892e491069e799" style="width: 100.0%; height: 100.0%;">Carolinenhaus/Elisabethkirche</div>`)[0];
+            popup_4924ec4c96f74383b3ac5d645930a574.setContent(html_9c79bb2f14cf4277b3892e491069e799);
+        
+
+        circle_marker_e8bdf14517bf4731a721580b72cf2b24.bindPopup(popup_4924ec4c96f74383b3ac5d645930a574)
+        ;
+
+        
+    
+    
+            var circle_marker_fdd43c4bc4ec490abaefe50c42ca942b = L.circleMarker(
+                [50.813691, 8.770734],
+                {"bubblingMouseEvents": true, "color": "#ff0000", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff0000", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 2, "stroke": true, "weight": 3}
+            ).addTo(map_81481fd4d7644eb790d24bf91f628fd9);
+        
+    
+        var popup_406a7509974345ada9d191975785a470 = L.popup({"maxWidth": "100%"});
+
+        
+            var html_2b8fdfc88bcb41dd988f9dcf2f23fe68 = $(`<div id="html_2b8fdfc88bcb41dd988f9dcf2f23fe68" style="width: 100.0%; height: 100.0%;">Neue Universitaetsbibliothek</div>`)[0];
+            popup_406a7509974345ada9d191975785a470.setContent(html_2b8fdfc88bcb41dd988f9dcf2f23fe68);
+        
+
+        circle_marker_fdd43c4bc4ec490abaefe50c42ca942b.bindPopup(popup_406a7509974345ada9d191975785a470)
+        ;
+
+        
+    
+    
+            var circle_marker_f81c3e1e2add404b9af23c10143f10a7 = L.circleMarker(
+                [50.82022, 8.77103],
+                {"bubblingMouseEvents": true, "color": "#ff0000", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff0000", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "stroke": true, "weight": 3}
+            ).addTo(map_81481fd4d7644eb790d24bf91f628fd9);
+        
+    
+        var popup_02dca411683a4fecb1c312ddeb234eb7 = L.popup({"maxWidth": "100%"});
+
+        
+            var html_db7c7cbb43984906bfe497ccb895dcf0 = $(`<div id="html_db7c7cbb43984906bfe497ccb895dcf0" style="width: 100.0%; height: 100.0%;">Cafe Traume/Affoellerwiesen</div>`)[0];
+            popup_02dca411683a4fecb1c312ddeb234eb7.setContent(html_db7c7cbb43984906bfe497ccb895dcf0);
+        
+
+        circle_marker_f81c3e1e2add404b9af23c10143f10a7.bindPopup(popup_02dca411683a4fecb1c312ddeb234eb7)
+        ;
+
+        
+    
+    
+            var circle_marker_18e68ab21e694802b0217bab0a9ed9da = L.circleMarker(
+                [50.812779, 8.780602],
+                {"bubblingMouseEvents": true, "color": "#ff0000", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff0000", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_81481fd4d7644eb790d24bf91f628fd9);
+        
+    
+        var popup_1bbd6a5be8934ecb8a77c2e3e2eb7130 = L.popup({"maxWidth": "100%"});
+
+        
+            var html_a5cac2bd4c864209ade08e61ea4e765d = $(`<div id="html_a5cac2bd4c864209ade08e61ea4e765d" style="width: 100.0%; height: 100.0%;">Am Schuelerpark</div>`)[0];
+            popup_1bbd6a5be8934ecb8a77c2e3e2eb7130.setContent(html_a5cac2bd4c864209ade08e61ea4e765d);
+        
+
+        circle_marker_18e68ab21e694802b0217bab0a9ed9da.bindPopup(popup_1bbd6a5be8934ecb8a77c2e3e2eb7130)
+        ;
+
+        
+    
+    
+            var circle_marker_6a64b3e16e8c4215800e5e64d5b9708d = L.circleMarker(
+                [50.822927, 8.774681],
+                {"bubblingMouseEvents": true, "color": "#ff0000", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff0000", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 3}
+            ).addTo(map_81481fd4d7644eb790d24bf91f628fd9);
+        
+    
+        var popup_dcd3e0fe98b54386b1626db3ff7307b3 = L.popup({"maxWidth": "100%"});
+
+        
+            var html_331bb856b530400a914cf1bee6cf5325 = $(`<div id="html_331bb856b530400a914cf1bee6cf5325" style="width: 100.0%; height: 100.0%;">Alte Kasseler Strasse/Jaegertunnel</div>`)[0];
+            popup_dcd3e0fe98b54386b1626db3ff7307b3.setContent(html_331bb856b530400a914cf1bee6cf5325);
+        
+
+        circle_marker_6a64b3e16e8c4215800e5e64d5b9708d.bindPopup(popup_dcd3e0fe98b54386b1626db3ff7307b3)
+        ;
+
+        
+    
+    
+            var circle_marker_e33666503a7246579400a59f2e49a060 = L.circleMarker(
+                [50.78950800000001, 8.756438000000001],
+                {"bubblingMouseEvents": true, "color": "#ff0000", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff0000", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 3}
+            ).addTo(map_81481fd4d7644eb790d24bf91f628fd9);
+        
+    
+        var popup_b6e67bd8632f4047b55333a378bf56aa = L.popup({"maxWidth": "100%"});
+
+        
+            var html_f58cc9b2e1784a6ea4c089b34b1918e7 = $(`<div id="html_f58cc9b2e1784a6ea4c089b34b1918e7" style="width: 100.0%; height: 100.0%;">Am Krekel/Stadtwerke Marburg</div>`)[0];
+            popup_b6e67bd8632f4047b55333a378bf56aa.setContent(html_f58cc9b2e1784a6ea4c089b34b1918e7);
+        
+
+        circle_marker_e33666503a7246579400a59f2e49a060.bindPopup(popup_b6e67bd8632f4047b55333a378bf56aa)
+        ;
+
+        
+    
+    
+            var circle_marker_eebdb1829d854370a85376adc41d03e2 = L.circleMarker(
+                [50.807894, 8.766971],
+                {"bubblingMouseEvents": true, "color": "#ff0000", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff0000", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 1, "stroke": true, "weight": 3}
+            ).addTo(map_81481fd4d7644eb790d24bf91f628fd9);
+        
+    
+        var popup_c7eb827cdbbc4fb4ba26d579c9c4bba4 = L.popup({"maxWidth": "100%"});
+
+        
+            var html_95de8459e62249179f9c5c085431fcb5 = $(`<div id="html_95de8459e62249179f9c5c085431fcb5" style="width: 100.0%; height: 100.0%;">Am Plan/Wirtschaftswissenschaften</div>`)[0];
+            popup_c7eb827cdbbc4fb4ba26d579c9c4bba4.setContent(html_95de8459e62249179f9c5c085431fcb5);
+        
+
+        circle_marker_eebdb1829d854370a85376adc41d03e2.bindPopup(popup_c7eb827cdbbc4fb4ba26d579c9c4bba4)
+        ;
+
+        
+    
+    
+            var circle_marker_b7c5c22de974472cba9ebcc494a1d952 = L.circleMarker(
+                [50.805809, 8.782821],
+                {"bubblingMouseEvents": true, "color": "#ff0000", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff0000", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 3}
+            ).addTo(map_81481fd4d7644eb790d24bf91f628fd9);
+        
+    
+        var popup_61e20a6d9a1c4070b0ec35de370dbdc3 = L.popup({"maxWidth": "100%"});
+
+        
+            var html_daab45c4b1674929922e5264ca9c00d3 = $(`<div id="html_daab45c4b1674929922e5264ca9c00d3" style="width: 100.0%; height: 100.0%;">An den Siechengaerten</div>`)[0];
+            popup_61e20a6d9a1c4070b0ec35de370dbdc3.setContent(html_daab45c4b1674929922e5264ca9c00d3);
+        
+
+        circle_marker_b7c5c22de974472cba9ebcc494a1d952.bindPopup(popup_61e20a6d9a1c4070b0ec35de370dbdc3)
+        ;
+
+        
+    
+    
+            var circle_marker_47cddf9b1ebb4e8da8f99f9409c7c903 = L.circleMarker(
+                [50.78100000000001, 8.765460000000001],
+                {"bubblingMouseEvents": true, "color": "#ff0000", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff0000", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4, "stroke": true, "weight": 3}
+            ).addTo(map_81481fd4d7644eb790d24bf91f628fd9);
+        
+    
+        var popup_85296ab7179b4d23ad613fcb43d7c564 = L.popup({"maxWidth": "100%"});
+
+        
+            var html_7e0b4267911241f698b7bc1bc6aeeaf5 = $(`<div id="html_7e0b4267911241f698b7bc1bc6aeeaf5" style="width: 100.0%; height: 100.0%;">Ersatz-Station / August-Bebel-Platz </div>`)[0];
+            popup_85296ab7179b4d23ad613fcb43d7c564.setContent(html_7e0b4267911241f698b7bc1bc6aeeaf5);
+        
+
+        circle_marker_47cddf9b1ebb4e8da8f99f9409c7c903.bindPopup(popup_85296ab7179b4d23ad613fcb43d7c564)
+        ;
+
+        
+    
+    
+            var circle_marker_876f2e07b7564bb9a6a5e2209250c64d = L.circleMarker(
+                [50.808852, 8.773133999999999],
+                {"bubblingMouseEvents": true, "color": "#ff0000", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff0000", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4, "stroke": true, "weight": 3}
+            ).addTo(map_81481fd4d7644eb790d24bf91f628fd9);
+        
+    
+        var popup_e2dc016a385b43f48a92a0f07bc0d2d7 = L.popup({"maxWidth": "100%"});
+
+        
+            var html_4e81be093b714e7196d59863be028a7a = $(`<div id="html_4e81be093b714e7196d59863be028a7a" style="width: 100.0%; height: 100.0%;">Biegenstrasse/Cineplex</div>`)[0];
+            popup_e2dc016a385b43f48a92a0f07bc0d2d7.setContent(html_4e81be093b714e7196d59863be028a7a);
+        
+
+        circle_marker_876f2e07b7564bb9a6a5e2209250c64d.bindPopup(popup_e2dc016a385b43f48a92a0f07bc0d2d7)
+        ;
+
+        
+    
+    
+            var circle_marker_5d9ed6ef054b4f23b928fc09b41bce0a = L.circleMarker(
+                [50.813203, 8.775948],
+                {"bubblingMouseEvents": true, "color": "#ff0000", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff0000", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 3}
+            ).addTo(map_81481fd4d7644eb790d24bf91f628fd9);
+        
+    
+        var popup_4cbb44f34ab54b2ca9c6d958a0468354 = L.popup({"maxWidth": "100%"});
+
+        
+            var html_b5c50282ea2c4d5281934ba5162359e9 = $(`<div id="html_b5c50282ea2c4d5281934ba5162359e9" style="width: 100.0%; height: 100.0%;">Biegenstrasse/Volkshochschule</div>`)[0];
+            popup_4cbb44f34ab54b2ca9c6d958a0468354.setContent(html_b5c50282ea2c4d5281934ba5162359e9);
+        
+
+        circle_marker_5d9ed6ef054b4f23b928fc09b41bce0a.bindPopup(popup_4cbb44f34ab54b2ca9c6d958a0468354)
+        ;
+
+        
+    
+    
+            var circle_marker_c13059cfa77248c997a9d0095e325247 = L.circleMarker(
+                [50.816601, 8.751507],
+                {"bubblingMouseEvents": true, "color": "#ff0000", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff0000", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 1, "stroke": true, "weight": 3}
+            ).addTo(map_81481fd4d7644eb790d24bf91f628fd9);
+        
+    
+        var popup_f5098f1b7eb94573a017e97549371c00 = L.popup({"maxWidth": "100%"});
+
+        
+            var html_6b5d201e0c2741918110b4d92734e2b2 = $(`<div id="html_6b5d201e0c2741918110b4d92734e2b2" style="width: 100.0%; height: 100.0%;">Brunnenstrasse</div>`)[0];
+            popup_f5098f1b7eb94573a017e97549371c00.setContent(html_6b5d201e0c2741918110b4d92734e2b2);
+        
+
+        circle_marker_c13059cfa77248c997a9d0095e325247.bindPopup(popup_f5098f1b7eb94573a017e97549371c00)
+        ;
+
+        
+    
+    
+            var circle_marker_bbdb6242ba7d48858d9496897097aaee = L.circleMarker(
+                [50.808056842842, 8.7753081321716],
+                {"bubblingMouseEvents": true, "color": "#ff0000", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff0000", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 3}
+            ).addTo(map_81481fd4d7644eb790d24bf91f628fd9);
+        
+    
+        var popup_f825fc168fde4a77aa2cab84dc7135ce = L.popup({"maxWidth": "100%"});
+
+        
+            var html_ec5e5a0967184c8fa1184d5244ea8b4c = $(`<div id="html_ec5e5a0967184c8fa1184d5244ea8b4c" style="width: 100.0%; height: 100.0%;">Elisabeth-Blochmann-Platz</div>`)[0];
+            popup_f825fc168fde4a77aa2cab84dc7135ce.setContent(html_ec5e5a0967184c8fa1184d5244ea8b4c);
+        
+
+        circle_marker_bbdb6242ba7d48858d9496897097aaee.bindPopup(popup_f825fc168fde4a77aa2cab84dc7135ce)
+        ;
+
+        
+    
+    
+            var circle_marker_2328dc476c384fda90eeb4e9a5c9405d = L.circleMarker(
+                [50.804522, 8.770358],
+                {"bubblingMouseEvents": true, "color": "#ff0000", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff0000", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 1, "stroke": true, "weight": 3}
+            ).addTo(map_81481fd4d7644eb790d24bf91f628fd9);
+        
+    
+        var popup_1d0694cce63f4ab483b35408fa7f502a = L.popup({"maxWidth": "100%"});
+
+        
+            var html_febdb1b85b0a4317a03339a388c4d239 = $(`<div id="html_febdb1b85b0a4317a03339a388c4d239" style="width: 100.0%; height: 100.0%;">Frankfurter Strasse/Psychologie</div>`)[0];
+            popup_1d0694cce63f4ab483b35408fa7f502a.setContent(html_febdb1b85b0a4317a03339a388c4d239);
+        
+
+        circle_marker_2328dc476c384fda90eeb4e9a5c9405d.bindPopup(popup_1d0694cce63f4ab483b35408fa7f502a)
+        ;
+
+        
+    
+    
+            var circle_marker_ae72ac0a0a21407aa5193938b5e2ca9f = L.circleMarker(
+                [50.785589, 8.779437],
+                {"bubblingMouseEvents": true, "color": "#ff0000", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff0000", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 1, "stroke": true, "weight": 3}
+            ).addTo(map_81481fd4d7644eb790d24bf91f628fd9);
+        
+    
+        var popup_8f7a6875e9d941919e7f516c21eb76ea = L.popup({"maxWidth": "100%"});
+
+        
+            var html_ca22a4c1c36a45f9a494134debcb7701 = $(`<div id="html_ca22a4c1c36a45f9a494134debcb7701" style="width: 100.0%; height: 100.0%;">Friedrich-Ebert-Strasse/ Christian-Wolff-Haeuser</div>`)[0];
+            popup_8f7a6875e9d941919e7f516c21eb76ea.setContent(html_ca22a4c1c36a45f9a494134debcb7701);
+        
+
+        circle_marker_ae72ac0a0a21407aa5193938b5e2ca9f.bindPopup(popup_8f7a6875e9d941919e7f516c21eb76ea)
+        ;
+
+        
+    
+    
+            var circle_marker_bfc6b1b961a04f79ad9f3536697410b3 = L.circleMarker(
+                [50.798840999999996, 8.762144000000001],
+                {"bubblingMouseEvents": true, "color": "#ff0000", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff0000", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4, "stroke": true, "weight": 3}
+            ).addTo(map_81481fd4d7644eb790d24bf91f628fd9);
+        
+    
+        var popup_f106285378a542229efbd1f62a1105d2 = L.popup({"maxWidth": "100%"});
+
+        
+            var html_5f5af41d65614dcbb95ea6cba918d0c6 = $(`<div id="html_5f5af41d65614dcbb95ea6cba918d0c6" style="width: 100.0%; height: 100.0%;">Frankfurter Strasse/Theater</div>`)[0];
+            popup_f106285378a542229efbd1f62a1105d2.setContent(html_5f5af41d65614dcbb95ea6cba918d0c6);
+        
+
+        circle_marker_bfc6b1b961a04f79ad9f3536697410b3.bindPopup(popup_f106285378a542229efbd1f62a1105d2)
+        ;
+
+        
+    
+    
+            var circle_marker_bdc8c061abb640e5aafdaeacd7c679df = L.circleMarker(
+                [50.798655746566, 8.752965331077599],
+                {"bubblingMouseEvents": true, "color": "#ff0000", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff0000", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 3}
+            ).addTo(map_81481fd4d7644eb790d24bf91f628fd9);
+        
+    
+        var popup_fe53604f97d24a6a8caa316e55c12775 = L.popup({"maxWidth": "100%"});
+
+        
+            var html_4144921ec07a4e1db09b411e77c7358d = $(`<div id="html_4144921ec07a4e1db09b411e77c7358d" style="width: 100.0%; height: 100.0%;">Georg-Gassmann-Stadion</div>`)[0];
+            popup_fe53604f97d24a6a8caa316e55c12775.setContent(html_4144921ec07a4e1db09b411e77c7358d);
+        
+
+        circle_marker_bdc8c061abb640e5aafdaeacd7c679df.bindPopup(popup_fe53604f97d24a6a8caa316e55c12775)
+        ;
+
+        
+    
+    
+            var circle_marker_4967fd74ce2347beb7e63ebb164d8fae = L.circleMarker(
+                [50.827921, 8.775086],
+                {"bubblingMouseEvents": true, "color": "#ff0000", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff0000", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_81481fd4d7644eb790d24bf91f628fd9);
+        
+    
+        var popup_f5756a1b03bd4a96a3bf1121116b68b2 = L.popup({"maxWidth": "100%"});
+
+        
+            var html_6caab2950aa84d8da074a080ed006ffc = $(`<div id="html_6caab2950aa84d8da074a080ed006ffc" style="width: 100.0%; height: 100.0%;">Ginseldorfer Weg</div>`)[0];
+            popup_f5756a1b03bd4a96a3bf1121116b68b2.setContent(html_6caab2950aa84d8da074a080ed006ffc);
+        
+
+        circle_marker_4967fd74ce2347beb7e63ebb164d8fae.bindPopup(popup_f5756a1b03bd4a96a3bf1121116b68b2)
+        ;
+
+        
+    
+    
+            var circle_marker_8b05dc3fa1e045babcc41ab6e508c943 = L.circleMarker(
+                [50.819957212230996, 8.7737363576889],
+                {"bubblingMouseEvents": true, "color": "#ff0000", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff0000", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 3}
+            ).addTo(map_81481fd4d7644eb790d24bf91f628fd9);
+        
+    
+        var popup_8fd2db50516b47aaaf12e961dcbdc600 = L.popup({"maxWidth": "100%"});
+
+        
+            var html_a73e4bc68d8048e69f059635b27cf6f3 = $(`<div id="html_a73e4bc68d8048e69f059635b27cf6f3" style="width: 100.0%; height: 100.0%;">Hauptbahnhof</div>`)[0];
+            popup_8fd2db50516b47aaaf12e961dcbdc600.setContent(html_a73e4bc68d8048e69f059635b27cf6f3);
+        
+
+        circle_marker_8b05dc3fa1e045babcc41ab6e508c943.bindPopup(popup_8fd2db50516b47aaaf12e961dcbdc600)
+        ;
+
+        
+    
+    
+            var circle_marker_197ea76906134afb93799554c9dcdd3c = L.circleMarker(
+                [50.810971, 8.774241],
+                {"bubblingMouseEvents": true, "color": "#ff0000", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff0000", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 3}
+            ).addTo(map_81481fd4d7644eb790d24bf91f628fd9);
+        
+    
+        var popup_e91f0c827a754f9b9ba7df50392143f5 = L.popup({"maxWidth": "100%"});
+
+        
+            var html_27e5231ab4a24ecbb3c447152959e496 = $(`<div id="html_27e5231ab4a24ecbb3c447152959e496" style="width: 100.0%; height: 100.0%;">Audimax</div>`)[0];
+            popup_e91f0c827a754f9b9ba7df50392143f5.setContent(html_27e5231ab4a24ecbb3c447152959e496);
+        
+
+        circle_marker_197ea76906134afb93799554c9dcdd3c.bindPopup(popup_e91f0c827a754f9b9ba7df50392143f5)
+        ;
+
+        
+    
+    
+            var circle_marker_2f19defcdbef416ab6dbe05dd6febade = L.circleMarker(
+                [50.813187, 8.763264],
+                {"bubblingMouseEvents": true, "color": "#ff0000", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff0000", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 3}
+            ).addTo(map_81481fd4d7644eb790d24bf91f628fd9);
+        
+    
+        var popup_e7e77a5ca1d54aad9a2fc8b73ffbcc7e = L.popup({"maxWidth": "100%"});
+
+        
+            var html_b3372e0a24af4f7ca344c3b6a4dbde5e = $(`<div id="html_b3372e0a24af4f7ca344c3b6a4dbde5e" style="width: 100.0%; height: 100.0%;">Marbacher Weg/Pharmazie</div>`)[0];
+            popup_e7e77a5ca1d54aad9a2fc8b73ffbcc7e.setContent(html_b3372e0a24af4f7ca344c3b6a4dbde5e);
+        
+
+        circle_marker_2f19defcdbef416ab6dbe05dd6febade.bindPopup(popup_e7e77a5ca1d54aad9a2fc8b73ffbcc7e)
+        ;
+
+        
+    
+    
+            var circle_marker_75f32f80d67247a4b42a664f35844580 = L.circleMarker(
+                [50.816652799676, 8.7811660766602],
+                {"bubblingMouseEvents": true, "color": "#ff0000", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff0000", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4, "stroke": true, "weight": 3}
+            ).addTo(map_81481fd4d7644eb790d24bf91f628fd9);
+        
+    
+        var popup_63e479d56bdb43378952427de3369d37 = L.popup({"maxWidth": "100%"});
+
+        
+            var html_0ad76c6cea2b48ef9ea514f58665731f = $(`<div id="html_0ad76c6cea2b48ef9ea514f58665731f" style="width: 100.0%; height: 100.0%;">Ortenbergplatz</div>`)[0];
+            popup_63e479d56bdb43378952427de3369d37.setContent(html_0ad76c6cea2b48ef9ea514f58665731f);
+        
+
+        circle_marker_75f32f80d67247a4b42a664f35844580.bindPopup(popup_63e479d56bdb43378952427de3369d37)
+        ;
+
+        
+    
+    
+            var circle_marker_dc3176656ad740bdb03441148f838ffe = L.circleMarker(
+                [50.809813, 8.779428999999999],
+                {"bubblingMouseEvents": true, "color": "#ff0000", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff0000", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 3}
+            ).addTo(map_81481fd4d7644eb790d24bf91f628fd9);
+        
+    
+        var popup_12f158c1a7d54903ba5bb045dac029eb = L.popup({"maxWidth": "100%"});
+
+        
+            var html_09886b102fde4e6bb6daf98a5b444405 = $(`<div id="html_09886b102fde4e6bb6daf98a5b444405" style="width: 100.0%; height: 100.0%;">Philosophische Fakultaet</div>`)[0];
+            popup_12f158c1a7d54903ba5bb045dac029eb.setContent(html_09886b102fde4e6bb6daf98a5b444405);
+        
+
+        circle_marker_dc3176656ad740bdb03441148f838ffe.bindPopup(popup_12f158c1a7d54903ba5bb045dac029eb)
+        ;
+
+        
+    
+    
+            var circle_marker_9c51ab0c99b34118840a19a2895a2197 = L.circleMarker(
+                [50.801337, 8.773266],
+                {"bubblingMouseEvents": true, "color": "#ff0000", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff0000", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 3}
+            ).addTo(map_81481fd4d7644eb790d24bf91f628fd9);
+        
+    
+        var popup_26634c6d2d27482d810dcdcc644c7215 = L.popup({"maxWidth": "100%"});
+
+        
+            var html_48e81d48645847939693a8646837711f = $(`<div id="html_48e81d48645847939693a8646837711f" style="width: 100.0%; height: 100.0%;">Aquamar</div>`)[0];
+            popup_26634c6d2d27482d810dcdcc644c7215.setContent(html_48e81d48645847939693a8646837711f);
+        
+
+        circle_marker_9c51ab0c99b34118840a19a2895a2197.bindPopup(popup_26634c6d2d27482d810dcdcc644c7215)
+        ;
+
+        
+    
+    
+            var circle_marker_d92ce36ec0ce4c3299c82fd946fab9ef = L.circleMarker(
+                [50.790362, 8.766947],
+                {"bubblingMouseEvents": true, "color": "#ff0000", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff0000", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 3, "stroke": true, "weight": 3}
+            ).addTo(map_81481fd4d7644eb790d24bf91f628fd9);
+        
+    
+        var popup_9eb69d327ec94bf3859dd03097a7ce04 = L.popup({"maxWidth": "100%"});
+
+        
+            var html_80afa8b15f474250969bf629c35c4d76 = $(`<div id="html_80afa8b15f474250969bf629c35c4d76" style="width: 100.0%; height: 100.0%;">Stadtbuero</div>`)[0];
+            popup_9eb69d327ec94bf3859dd03097a7ce04.setContent(html_80afa8b15f474250969bf629c35c4d76);
+        
+
+        circle_marker_d92ce36ec0ce4c3299c82fd946fab9ef.bindPopup(popup_9eb69d327ec94bf3859dd03097a7ce04)
+        ;
+
+        
+    
+    
+            var circle_marker_a636261f623c4ec5b4bd5333beda71d0 = L.circleMarker(
+                [50.795224, 8.763266],
+                {"bubblingMouseEvents": true, "color": "#ff0000", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff0000", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 1, "stroke": true, "weight": 3}
+            ).addTo(map_81481fd4d7644eb790d24bf91f628fd9);
+        
+    
+        var popup_160b7042f52f4e4fa1797d1db232129e = L.popup({"maxWidth": "100%"});
+
+        
+            var html_d84cc64315c94cfb94ed617fcda907a9 = $(`<div id="html_d84cc64315c94cfb94ed617fcda907a9" style="width: 100.0%; height: 100.0%;">Suedbahnhof</div>`)[0];
+            popup_160b7042f52f4e4fa1797d1db232129e.setContent(html_d84cc64315c94cfb94ed617fcda907a9);
+        
+
+        circle_marker_a636261f623c4ec5b4bd5333beda71d0.bindPopup(popup_160b7042f52f4e4fa1797d1db232129e)
+        ;
+
+        
+    
+    
+            var circle_marker_333f4f38f0a84cb6bff790a87392e48d = L.circleMarker(
+                [50.79527, 8.762049000000001],
+                {"bubblingMouseEvents": true, "color": "#ff0000", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff0000", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 3}
+            ).addTo(map_81481fd4d7644eb790d24bf91f628fd9);
+        
+    
+        var popup_7f7e24567e9440b9a1e1e1b00a858120 = L.popup({"maxWidth": "100%"});
+
+        
+            var html_37f9fa12a70346ae838418d18ca5ec3b = $(`<div id="html_37f9fa12a70346ae838418d18ca5ec3b" style="width: 100.0%; height: 100.0%;">Suedbahnhof Westseite</div>`)[0];
+            popup_7f7e24567e9440b9a1e1e1b00a858120.setContent(html_37f9fa12a70346ae838418d18ca5ec3b);
+        
+
+        circle_marker_333f4f38f0a84cb6bff790a87392e48d.bindPopup(popup_7f7e24567e9440b9a1e1e1b00a858120)
+        ;
+
+        
+    
+    
+            var circle_marker_18fb92c8870a4a549041730118d101bb = L.circleMarker(
+                [50.803751490790006, 8.774696588516202],
+                {"bubblingMouseEvents": true, "color": "#ff0000", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff0000", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 3}
+            ).addTo(map_81481fd4d7644eb790d24bf91f628fd9);
+        
+    
+        var popup_e5a0118e4bdd42be88d7b0e2e03d2d80 = L.popup({"maxWidth": "100%"});
+
+        
+            var html_570eae9e579847a49a668aa7e8416a66 = $(`<div id="html_570eae9e579847a49a668aa7e8416a66" style="width: 100.0%; height: 100.0%;">Universitaetsstadion</div>`)[0];
+            popup_e5a0118e4bdd42be88d7b0e2e03d2d80.setContent(html_570eae9e579847a49a668aa7e8416a66);
+        
+
+        circle_marker_18fb92c8870a4a549041730118d101bb.bindPopup(popup_e5a0118e4bdd42be88d7b0e2e03d2d80)
+        ;
+
+        
+    
+    
+            var circle_marker_0c6e606b06a44ed89e71d154779716cb = L.circleMarker(
+                [50.807063, 8.769917999999999],
+                {"bubblingMouseEvents": true, "color": "#ff0000", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff0000", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 3}
+            ).addTo(map_81481fd4d7644eb790d24bf91f628fd9);
+        
+    
+        var popup_3a49373662cb4b03a712f88c05c424dc = L.popup({"maxWidth": "100%"});
+
+        
+            var html_5e27c8743638418593497e2e6f59299f = $(`<div id="html_5e27c8743638418593497e2e6f59299f" style="width: 100.0%; height: 100.0%;">Universitaetsstrasse/Bibliothek Jura</div>`)[0];
+            popup_3a49373662cb4b03a712f88c05c424dc.setContent(html_5e27c8743638418593497e2e6f59299f);
+        
+
+        circle_marker_0c6e606b06a44ed89e71d154779716cb.bindPopup(popup_3a49373662cb4b03a712f88c05c424dc)
+        ;
+
+        
+    
+    
+            var circle_marker_be1ce37e53a24d60adeb842ca78a55de = L.circleMarker(
+                [50.836178000000004, 8.756796000000001],
+                {"bubblingMouseEvents": true, "color": "#ff0000", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff0000", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 4, "stroke": true, "weight": 3}
+            ).addTo(map_81481fd4d7644eb790d24bf91f628fd9);
+        
+    
+        var popup_7292f39a89614803a466f99c0bf4edf7 = L.popup({"maxWidth": "100%"});
+
+        
+            var html_e8219adcd0674e509c66bd659954e88d = $(`<div id="html_e8219adcd0674e509c66bd659954e88d" style="width: 100.0%; height: 100.0%;">Wehrda Buergerhaus</div>`)[0];
+            popup_7292f39a89614803a466f99c0bf4edf7.setContent(html_e8219adcd0674e509c66bd659954e88d);
+        
+
+        circle_marker_be1ce37e53a24d60adeb842ca78a55de.bindPopup(popup_7292f39a89614803a466f99c0bf4edf7)
+        ;
+
+        
+    
+    
+            var circle_marker_428cd6a21a9042efa8a1e364903d3b05 = L.circleMarker(
+                [50.804725, 8.759248],
+                {"bubblingMouseEvents": true, "color": "#ff0000", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "#ff0000", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 2, "stroke": true, "weight": 3}
+            ).addTo(map_81481fd4d7644eb790d24bf91f628fd9);
+        
+    
+        var popup_8b7c587b6cb2454a8612f9d495adb5ac = L.popup({"maxWidth": "100%"});
+
+        
+            var html_37918963b6f042f995432f61bfc55dac = $(`<div id="html_37918963b6f042f995432f61bfc55dac" style="width: 100.0%; height: 100.0%;">Wilhelmsplatz</div>`)[0];
+            popup_8b7c587b6cb2454a8612f9d495adb5ac.setContent(html_37918963b6f042f995432f61bfc55dac);
+        
+
+        circle_marker_428cd6a21a9042efa8a1e364903d3b05.bindPopup(popup_8b7c587b6cb2454a8612f9d495adb5ac)
+        ;
+
+        
+    
+</script>

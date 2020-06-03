@@ -10,6 +10,10 @@ from sklearn.metrics import r2_score
 from sklearn.metrics import mean_squared_error
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import RandomizedSearchCV
+from sklearn.externals.joblib import dump, load
+from . import utils
+import os
+
 
 def retrainModel_NumberOfTrips(dfTripsPerDay, optimalHyperparameterTest):
 
@@ -83,6 +87,9 @@ def retrainModel_NumberOfTrips(dfTripsPerDay, optimalHyperparameterTest):
     x_train = sscaler.fit_transform(x_train)
     x_test = sscaler.transform(x_test)
 
+    sscalerY = StandardScaler()
+    y_train = sscalerY.fit_transform(y_train.values.reshape(-1, 1))
+    y_test = sscalerY.transform(y_test.values.reshape(-1, 1))
     ###Find the optimal Hyperparameter by testing multiple (150) combinations using RandomizedSearchCV
     if optimalHyperparameterTest == True:
         # Number of trees in random forest
@@ -133,11 +140,18 @@ def retrainModel_NumberOfTrips(dfTripsPerDay, optimalHyperparameterTest):
 
     #Evaluate the model based on the train test split
     y_pred_test = reg.predict(x_test)
+    y_pred_test = sscalerY.inverse_transform(y_pred_test)
+    y_test = sscalerY.inverse_transform(y_test)
+
     errTest = mean_absolute_error(y_test, y_pred_test)
     err_mseTest = mean_squared_error(y_test, y_pred_test)
     err_r2Test = r2_score(y_test, y_pred_test)
 
     y_pred_train = reg.predict(x_train)
+
+    y_pred_train = sscalerY.inverse_transform(y_pred_train)
+    y_train = sscalerY.inverse_transform(y_train)
+
     errTrain = mean_absolute_error(y_train, y_pred_train)
     err_mseTrain = mean_squared_error(y_train, y_pred_train)
     err_r2Train = r2_score(y_train, y_pred_train)
@@ -164,16 +178,74 @@ def retrainModel_NumberOfTrips(dfTripsPerDay, optimalHyperparameterTest):
     #Scale the Data
     sscaler = StandardScaler()
     xScaled = sscaler.fit_transform(X)
-    reg.fit(xScaled,Y)
+    sscalerY = StandardScaler()
+    yScaled = sscalerY.fit_transform(X)
+    
+    reg.fit(xScaled,yScaled)
+    #Save the model
+    path = os.path.join(utils.get_ml_path(), "numberOfTrips/randomForestRegressor_NumberOfTrips.pkl")
+    dump(reg,path)
 
-    return reg,sscaler
+    # Save the scaler
+    pathScaler = os.path.join(utils.get_ml_path(), "numberOfTrips/randomForestRegressor_NumberOfTripsScaler.bin")
+    dump(reg,pathScaler)
+
+    pathScalerY = os.path.join(utils.get_ml_path(), "numberOfTrips/randomForestRegressor_NumberOfTripsScalerY.bin")
+    dump(reg,pathScalerY)
+    
 
 def loadModel_NumberOfTrips():
-    pass
+    #Load NN-Classifier
+    path = os.path.join(utils.get_ml_path(), "numberOfTrips/randomForestRegressor_NumberOfTrips.pkl")
+    rfr = load(path , mmap_mode ='r')
+    pathScaler = os.path.join(utils.get_ml_path(), "numberOfTrips/randomForestRegressor_NumberOfTripsScaler.bin")
+    sscaler = load(pathScaler)
+    pathScalerY = os.path.join(utils.get_ml_path(), "numberOfTrips/randomForestRegressor_NumberOfTripsScalerY.bin")
+    sscalerY = load(pathScalerY)
+    '''
+    #Visualize the Prediction
+    day = []
+    for i in range(len(prediction)):
+        day.append(i)
+  
+    plt.plot(day,prediction, label="Predicted number of trips")
+    plt.title = "Visualization of the Prediction"
+    plt.xlabel("Datapoints of testset")
+    plt.ylabel("Number of Trips")
+    plt.legend(loc="upper left")
 
-def predict_NumberOfTrips(df, regressor, sscaler):
+    plt.tight_layout()
+    plt.show()
+    '''
+    return rfr,sscaler, sscalerY
 
-    dfSalced = sscaler.transform(df)
-    prediction = regressor.predict(dfSalced)
+def predict_NumberOfTrips(dfInput, model, sscaler, sscalerY):
+    df = dfInput.copy()
+    features = prediction.createFeatures(df)
+    features.drop(inplace=True,labels=['tripsPerDay'],axis=1,errors='ignore').values
+    xScaled = sscaler.transform(features)
+    prediction = regressor.predict(xScaled)
+    #Data
+    dfTripsPerDayRdy = createFeatures(dfTripsPerDay)
+    prediction = model.predict(dfTripsPerDayRdy)
+    prediction = sscalerY.inverse_transform(prediction)
 
-    return prediction
+    # Save data
+    path = os.path.join(utils.get_prediciton_path(), "output/NumberOfTripPrediction.csv")
+    
+    df['tripsPerDay'] = prediction
+    df.to_csv(path, index=False)
+
+    # Plot data
+    # TODO Fix legend and axis
+    prediction.to_csv("prediction.csv")
+    plt.plot(range(0,len(prediction)),prediction, label="Predicted number of trips")
+    plt.title = "Visualization of the Prediction"
+    plt.xlabel("Datapoints of testset")
+    plt.ylabel("Number of Trips")
+    plt.legend(loc="upper left")
+
+    plt.tight_layout()
+    plt.show()
+
+    return df

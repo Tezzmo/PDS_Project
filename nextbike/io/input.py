@@ -9,7 +9,8 @@ import datetime
 #region read-in
 
 # load raw nextbike data as csv file from designated directory
-def read_file(path=os.path.join(get_data_path(), "input/inputData.csv")):
+def read_file(inputPath = "inputData.csv"):
+    path=os.path.join(get_data_path(),'input/', inputPath)
     try:
         df = pd.read_csv(path)
         return df
@@ -78,6 +79,7 @@ def readSavedTripsPerDay(path=os.path.join(get_data_path(), "input/dfTripsPerDay
 def readSavedStations(path=os.path.join(get_data_path(), "input/dfStations_Saved.csv")):
     try:
         df = pd.read_csv(path, sep=';')
+        df.set_index('pNumber', inplace = True)
         return df
 
     except FileExistsError:

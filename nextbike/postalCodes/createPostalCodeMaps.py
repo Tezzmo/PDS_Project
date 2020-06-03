@@ -52,6 +52,6 @@ def createTripsPerPostalCodeMap(dfTrips,month,start):
              fill_color='BuPu', fill_opacity=0.7, line_opacity=0.2,
              legend_name='numberOfStarts')
     
-    filepath='map.html'
+    filepath=os.path.abspath('data/output/PostalCodeMap.html')
     map.save(filepath)
     webbrowser.open(filepath)

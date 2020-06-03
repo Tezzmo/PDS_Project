@@ -15,16 +15,22 @@ from IPython.core.display import HTML
 def main(start):
 
     print("Welcome")
-    print("Your options: \n1 - Rebuild the model \n2 - Use saved model")
-    userInteraction = input("Press 1 or 2") 
+    print("Your options: \n1 - Rebuild the model \n2 - Rebuild the model on new data \n3 - Use saved model")
+    userInteraction = input("Press 1, 2 or 3") 
 
     if userInteraction == '1':
         print('Start to rebuild the model, this will take several minutes')
         dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay = rebuild()
-    else:
+    elif userInteraction == '2':
+        print('Input the filename in data/input/')
+        fileInput = input('Exp.: data.csv')
+        dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay = rebuild()
+    
+    elif userInteraction == '3':
         print('Start to load all data')
         dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay = useExisting()
 
+    
     mainMenue(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay)
 
 
@@ -69,12 +75,12 @@ def menueVisualization(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTri
 
 def menuePrediction(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay):
 
-    print("What are you interested in? \n 1 - Tripduration \n 2 - Number of Trips \n 3 - Number of Trips  \n 4 - Go back")
+    print("What are you interested in? \n 1 - Tripduration \n 2 - Direction of trips \n 3 - Number of trips  \n 4 - Go back")
     userInteraction = input("Choose a number <1 - 4>")
     userInteraction = int(userInteraction)
 
     if userInteraction in [1,2,3]:
-        prediction(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,userInteraction)
+        predict(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,userInteraction)
     elif userInteraction == 4:
         mainMenue(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay)
     else:
@@ -94,13 +100,16 @@ def useExisting():
     return dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay
 
 
-def rebuild():
+def rebuild(datapath = None):
 
     print("This step will take a few minutes.")
 
     #Def reload all data 
     print("Get raw data    -- 0%")
-    rawData = io.read_file()
+    if datapath != None:
+        rawData = io.read_file(datapath)
+    else:
+        rawData = io.read_file()
     dfWeather = io.getWeatherData()
 
     #Preprocess Trips
@@ -159,8 +168,9 @@ def visualize(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,
 
         pointInTime = datetime.datetime(year,month,day,hour,minute,secound)
 
-        visualization.visualizeNumberOfBikesPerStationMap(pointInTime, dfStations, dfBikesPerStationIndex).show()
-        visualization.visualizeNumberOfBikesPerStationBarplot(pointInTime, dfStations, dfBikesPerStationIndex).show()
+        visualization.visualizeNumberOfBikesPerStationMap(pointInTime, dfStations, dfBikesPerStationIndex)
+        
+        visualization.visualizeNumberOfBikesPerStationBarplot(pointInTime, dfStations, dfBikesPerStationIndex)
 
     elif type == 5:
         visualization.visualizeWeatherData(dfWeather).show()
@@ -193,7 +203,7 @@ def visualize(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,
 
 
 
-def prediction(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,type):
+def predict(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,type):
 
     if type == 1:
         pass
@@ -202,7 +212,7 @@ def prediction(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay
         pass
 
     elif type == 3:
-        print("Do you want to 1 - retrain the model or 2 - load a existing?")
+        print("Do you want to 1 - Train or 2 - Predict?")
         userInput = int(input("<1,2>"))
 
         if userInput == 1:
@@ -213,9 +223,11 @@ def prediction(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay
                     prediction.retrainModel_NumberOfTrips(dfTripsPerDay,True)
             else:
                 prediction.retrainModel_NumberOfTrips(dfTripsPerDay,False)
-
-        else:
-            pass
+        elif userInput == 2:
+            model, sscaler, sscalerY = prediction.loadModel_NumberOfTrips()
+            prediction.predict_NumberOfTrips(dfTripsPerDay, model, sscaler,sscalerY)
+        
+        menuePrediction(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay)
 
 
 

@@ -9,7 +9,7 @@ import math
 import os
 
 import json
-from shapely.geometry import shape, Point
+#from shapely.geometry import shape, Point
 
 
 def assignPostalCode(dfTrips):
@@ -24,7 +24,7 @@ def assignPostalCode(dfTrips):
 
     return dfWithPostalCode
 
-
+'''
 def assignPostalCodeAlternative(dfTrips):
 
     dfWithPostalCode = dfTrips
@@ -52,7 +52,7 @@ def assignPostalCodeAlternative(dfTrips):
     dfWithPostalCode['ePostalCode'] = postalCodesEnd
 
     return dfWithPostalCode
-    
+'''
 
 
 def check(row,point,js):

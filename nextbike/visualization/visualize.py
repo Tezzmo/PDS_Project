@@ -15,16 +15,19 @@ def visualizeNumberOfBikesPerStationMap(pointInTime, dfStations, dfStationBikeNu
     m = folium.Map(location=[50.8008, 8.7667], zoom_start=13, tiles='Stamen Toner')
 
     # get number of bikes for all stations at specific time
+    
     bikesPerStation = dfStationBikeNumber.loc[pointInTime]
     
     # iterrate over all stations
     for index, row in dfStations.iloc[1:].iterrows():     
-
+        
         colorStation = ''
-
+        
+        #print(bikesPerStation.info())
         # get number of bikes for station
-        radiusStation = int(bikesPerStation[int(row.index)])
-
+        # cast np.int64 to int. Else it brakes to JSON dump.
+        radiusStation = int(dfStationBikeNumber.loc[(dfStationBikeNumber.index == pointInTime), [str(index)]].values[0][0])
+        
         # set colorcode for marker based on number of bikes
         if  radiusStation < 11:
             colorStation = '#ff0000'
@@ -60,9 +63,9 @@ def visualizeNumberOfBikesPerStationMap(pointInTime, dfStations, dfStationBikeNu
                 ''' 
 
     m.get_root().html.add_child(folium.Element(legend_html))
-
+    print(type(m))
     #return final map
-    filepath='map.html'
+    filepath=os.path.abspath('data/output/BikesPerStationMap.html')
     m.save(filepath)
     webbrowser.open(filepath)
 
