@@ -1,13 +1,11 @@
 from sklearn.neighbors import NearestNeighbors
 from sklearn.externals import joblib
-from IPython.display import HTML
 from .utils import get_gejson_path
-
 import pandas as pd
 import datetime
 import folium
 import os
-
+import webbrowser
 
 
 #Give dfTrips including postalCode
@@ -54,5 +52,6 @@ def createTripsPerPostalCodeMap(dfTrips,month,start):
              fill_color='BuPu', fill_opacity=0.7, line_opacity=0.2,
              legend_name='numberOfStarts')
     
-    
-    display(map)
+    filepath='map.html'
+    map.save(filepath)
+    webbrowser.open(filepath)

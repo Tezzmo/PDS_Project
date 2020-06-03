@@ -23,7 +23,7 @@ def train():
     print("Linear model created")
     print("Training...")
 
-    io.save_model(lin)
+    io.output.save_model(lin)
 
 def trainKNNRegression(df):
     dfTrips = df.copy()

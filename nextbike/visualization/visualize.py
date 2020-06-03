@@ -4,7 +4,8 @@ import seaborn as sns
 import pandas as pd
 import numpy as np
 import scipy.stats as stats
-
+import os
+import webbrowser
 
 
 # visualize number of bikes per fixed station and time
@@ -22,7 +23,7 @@ def visualizeNumberOfBikesPerStationMap(pointInTime, dfStations, dfStationBikeNu
         colorStation = ''
 
         # get number of bikes for station
-        radiusStation = int(bikesPerStation[int(row.name)])
+        radiusStation = int(bikesPerStation[int(row.index)])
 
         # set colorcode for marker based on number of bikes
         if  radiusStation < 11:
@@ -61,7 +62,9 @@ def visualizeNumberOfBikesPerStationMap(pointInTime, dfStations, dfStationBikeNu
     m.get_root().html.add_child(folium.Element(legend_html))
 
     #return final map
-    return m
+    filepath='map.html'
+    m.save(filepath)
+    webbrowser.open(filepath)
 
 def visualizeNumberOfBikesPerStationBarplot(pointInTime, dfStations, dfStationBikeNumber):
     bikesPerStation = dfStationBikeNumber.loc[pointInTime].array

@@ -1,6 +1,18 @@
+import click
 import datetime
+from . import io
+from . import model
+from . import operation
+from . import postalCodes
+from . import visualization
+from . import prediction
+from IPython.display import display, Image
 from IPython.core.display import HTML
-def start():
+
+@click.command()
+@click.option('--start',default=False, help="Train the model.")
+
+def main(start):
 
     print("Welcome")
     print("Your options: \n1 - Rebuild the model \n2 - Use saved model")
@@ -73,11 +85,11 @@ def menuePrediction(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsP
 
 def useExisting():
 
-    dfWeather = nextbike.io.readSavedWeather()
-    dfTrips = nextbike.io.readSavedTrips()
-    dfStations = nextbike.io.readSavedStations()
-    dfBikesPerStationIndex = nextbike.io.readSavedBikesPerStation()
-    dfTripsPerDay = nextbike.io.readSavedTripsPerDay()
+    dfWeather = io.readSavedWeather()
+    dfTrips = io.readSavedTrips()
+    dfStations = io.readSavedStations()
+    dfBikesPerStationIndex = io.readSavedBikesPerStation()
+    dfTripsPerDay = io.readSavedTripsPerDay()
 
     return dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay
 
@@ -88,40 +100,40 @@ def rebuild():
 
     #Def reload all data 
     print("Get raw data    -- 0%")
-    rawData = nextbike.io.read_file()
-    dfWeather = nextbike.io.getWeatherData()
+    rawData = io.read_file()
+    dfWeather = io.getWeatherData()
 
     #Preprocess Trips
     print("create trips     -- 10% ")
-    dfRawData = nextbike.io.preprocessData(rawData)  
-    dfTripsRaw = nextbike.io.createTrips(dfRawData)
-    dfTrips = nextbike.io.drop_outliers(dfTripsRaw)
+    dfRawData = io.preprocessData(rawData)  
+    dfTripsRaw = io.createTrips(dfRawData)
+    dfTrips = io.drop_outliers(dfTripsRaw)
 
     #Add postalcode infos
     print("Assign postalCode   -- 60%")
-    dfTrips = nextbike.postalCodes.assignPostalCode(dfTrips)
-    dfTrips = nextbike.postalCodes.filterForPostalCodes(dfTrips)
+    dfTrips = postalCodes.assignPostalCode(dfTrips)
+    dfTrips = postalCodes.filterForPostalCodes(dfTrips)
     
 
     #Create station data
     print("Get station data   -- 80%")
-    stationData = nextbike.io.preprocessStationData(rawData)
-    dfBikesPerStationIndex = nextbike.io.createBikeNumberPerStationIndex(stationData)
-    dfStations = nextbike.io.createStations(dfRawData)
+    stationData = io.preprocessStationData(rawData)
+    dfBikesPerStationIndex = io.createBikeNumberPerStationIndex(stationData)
+    dfStations = io.createStations(dfRawData)
 
     #For additional predictions
     print("Trips per day   -- 90%")
-    dfTripsPerDay = nextbike.io.createTripsPerDay(dfTrips,dfWeather)
+    dfTripsPerDay = io.createTripsPerDay(dfTrips,dfWeather)
 
 
     #Save data
     #Pfad anpassen !!!  --> Muss in input speichern
     print("Save Dataframes")
-    nextbike.io.save_WeatherForReues(dfWeather)
-    nextbike.io.save_tripDataForReues(dfTrips)
-    nextbike.io.save_StationDataForReues(dfStations)
-    nextbike.io.save_dfBikesPerStationIndexForReues(dfBikesPerStationIndex)
-    nextbike.io.save_tripsPerDayForReues(dfTripsPerDay)
+    io.save_WeatherForReues(dfWeather)
+    io.save_tripDataForReues(dfTrips)
+    io.save_StationDataForReues(dfStations)
+    io.save_dfBikesPerStationIndexForReues(dfBikesPerStationIndex)
+    io.save_tripsPerDayForReues(dfTripsPerDay)
 
     return dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay
 
@@ -129,13 +141,13 @@ def rebuild():
 def visualize(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,type):
 
     if type == 1:
-        nextbike.visualization.visualizeMeanTripLength(dfTrips).show()
-        nextbike.visualization.visualizeStdTripLength(dfTrips).show()
-        nextbike.visualization.visualizeTripLengthBoxplots(dfTrips)
+        visualization.visualizeMeanTripLength(dfTrips).show()
+        visualization.visualizeStdTripLength(dfTrips).show()
+        visualization.visualizeTripLengthBoxplots(dfTrips)
     
     elif type == 2:
-        nextbike.visualization.visualizeNumberOfTrips(dfTrips).show()
-        nextbike.visualization.visualizeDistributionOfTripsPerMonth(dfTrips).show()
+        visualization.visualizeNumberOfTrips(dfTrips).show()
+        visualization.visualizeDistributionOfTripsPerMonth(dfTrips).show()
 
     elif type == 4:
         year = 2019
@@ -147,11 +159,11 @@ def visualize(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,
 
         pointInTime = datetime.datetime(year,month,day,hour,minute,secound)
 
-        nextbike.visualization.visualizeNumberOfBikesPerStationMap(pointInTime, dfStations, dfBikesPerStationIndex).show()
-        nextbike.visualization.visualizeNumberOfBikesPerStationBarplot(pointInTime, dfStations, dfBikesPerStationIndex).show()
+        visualization.visualizeNumberOfBikesPerStationMap(pointInTime, dfStations, dfBikesPerStationIndex).show()
+        visualization.visualizeNumberOfBikesPerStationBarplot(pointInTime, dfStations, dfBikesPerStationIndex).show()
 
     elif type == 5:
-        nextbike.visualization.visualizeWeatherData(dfWeather).show()
+        visualization.visualizeWeatherData(dfWeather).show()
 
     elif type == 3:
         while True:
@@ -167,11 +179,11 @@ def visualize(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,
                 userInput2 = input("<1-12>")
 
                 if userInput1 == '1':
-                    map = nextbike.postalCodes.createTripsPerPostalCodeMap(dfTrips,int(userInput2),True)
+                    postalCodes.createTripsPerPostalCodeMap(dfTrips,int(userInput2),True)
                 else:
-                    map = nextbike.postalCodes.createTripsPerPostalCodeMap(dfTrips,int(userInput2),False)
+                    postalCodes.createTripsPerPostalCodeMap(dfTrips,int(userInput2),False)
                 
-                display(HTML(map._repr_html_()))
+                
 
             else:
                 break
@@ -198,11 +210,15 @@ def prediction(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay
             userInput2 = input("<y,n>")
                 
             if userInput2.upper() == 'Y':
-                    nextbike.prediction.retrainModel_NumberOfTrips(dfTripsPerDay,True)
+                    prediction.retrainModel_NumberOfTrips(dfTripsPerDay,True)
             else:
-                nextbike.prediction.retrainModel_NumberOfTrips(dfTripsPerDay,False)
+                prediction.retrainModel_NumberOfTrips(dfTripsPerDay,False)
 
         else:
             pass
 
 
+
+
+if __name__ == '__main__':
+    main()
