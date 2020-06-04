@@ -62,7 +62,7 @@ def menueVisualization(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTri
     userInteraction = input("Choose a number <1 - 6> \n")
     userInteraction = int(userInteraction)
 
-    if userInteraction in [1,2,3,4,5,6]:
+    if userInteraction in [1,2,3,4,5]:
         visualize(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,userInteraction)
     elif userInteraction == 6:
         mainMenue(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay)
@@ -206,10 +206,31 @@ def visualize(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,
 def predict(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,type):
 
     if type == 1:
-        pass
+        print("Do you want to 1 - Train or 2 - Predict?")
+        userInput = int(input("<1,2> \n"))
+
+        if userInput == 1:
+            print("Do you want to use Hyperparameteroptimization?")
+            userInput2 = input("<y,n> \n")
+            print('This can take a few minutes')    
+            if userInput2.upper() == 'Y':
+                    prediction.retrainModel_DurationOfTrips(dfTrips,dfWeather,True)
+            else:
+                prediction.retrainModel_DurationOfTrips(dfTrips,dfWeather,False)
+        elif userInput == 2:
+            print('This can take a few minutes')
+            model, sscaler, sscalerY = prediction.loadModel_DurationOfTrips()
+            prediction.predict_DurationOfTrips(dfTrips, dfWeather, model, sscaler,sscalerY)
 
     elif type == 2:
-        pass
+        print("Do you want to 1 - Train or 2 - Predict?")
+        userInput = int(input("<1,2> \n"))
+
+        if userInput == 1:
+            prediction.trainKNNRegression(dfTrips,dfWeather)
+
+        elif userInput == 2:
+            pass
 
     elif type == 3:
         print("Do you want to 1 - Train or 2 - Predict?")

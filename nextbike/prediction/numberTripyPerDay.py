@@ -204,28 +204,14 @@ def retrainModel_NumberOfTrips(dfTripsPerDay, optimalHyperparameterTest):
     
 
 def loadModel_NumberOfTrips():
-    #Load NN-Classifier
+    #Load regression
     path = os.path.join(utils.get_ml_path(), "numberOfTrips/randomForestRegressor_NumberOfTrips.pkl")
     rfr = load(path , mmap_mode ='r')
     pathScaler = os.path.join(utils.get_ml_path(), "numberOfTrips/randomForestRegressor_NumberOfTripsScaler.bin")
     sscaler = load(pathScaler)
     pathScalerY = os.path.join(utils.get_ml_path(), "numberOfTrips/randomForestRegressor_NumberOfTripsScalerY.bin")
     sscalerY = load(pathScalerY)
-    '''
-    #Visualize the Prediction
-    day = []
-    for i in range(len(prediction)):
-        day.append(i)
   
-    plt.plot(day,prediction, label="Predicted number of trips")
-    plt.title = "Visualization of the Prediction"
-    plt.xlabel("Datapoints of testset")
-    plt.ylabel("Number of Trips")
-    plt.legend(loc="upper left")
-
-    plt.tight_layout()
-    plt.show()
-    '''
     return rfr,sscaler, sscalerY
 
 def predict_NumberOfTrips(dfInput, model, sscaler, sscalerY):
@@ -241,9 +227,7 @@ def predict_NumberOfTrips(dfInput, model, sscaler, sscalerY):
     prediction = model.predict(xScaled)
     prediction = sscalerY.inverse_transform(prediction)
     prediction = prediction.reshape(-1, 1)
-    print(len(prediction))
-    print(len(features))
-    print(len(df))
+    
     # Save data
     path = os.path.join(utils.get_prediction_path(), "output/NumberOfTripPrediction.csv")
     features['tripsPerDay'] = prediction
