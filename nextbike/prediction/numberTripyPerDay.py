@@ -188,7 +188,7 @@ def retrainModel_NumberOfTrips(dfTripsPerDay, optimalHyperparameterTest):
     sscaler = StandardScaler()
     xScaled = sscaler.fit_transform(X)
     sscalerY = StandardScaler()
-    yScaled = sscalerY.fit_transform(X)
+    yScaled = sscalerY.fit_transform(Y.values.reshape(-1, 1))
     
     reg.fit(xScaled,yScaled)
     #Save the model
@@ -226,8 +226,7 @@ def predict_NumberOfTrips(dfInput, model, sscaler, sscalerY):
     #Predict and inverse transformation
     prediction = model.predict(xScaled)
     prediction = sscalerY.inverse_transform(prediction)
-    prediction = prediction.reshape(-1, 1)
-    
+ 
     # Save data
     path = os.path.join(utils.get_prediction_path(), "output/NumberOfTripPrediction.csv")
     features['tripsPerDay'] = prediction
@@ -235,7 +234,6 @@ def predict_NumberOfTrips(dfInput, model, sscaler, sscalerY):
 
     # Plot data
     # TODO Fix legend and axis
-    prediction.to_csv("prediction.csv")
     plt.plot(range(0,len(prediction)),prediction, label="Predicted number of trips")
     plt.title = "Visualization of the Prediction"
     plt.xlabel("Datapoints of testset")
