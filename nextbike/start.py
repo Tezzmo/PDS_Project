@@ -38,7 +38,7 @@ def main(start):
 def mainMenue(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay):
 
     print("Your options: \n1 - Visualize \n2 - Predict \n3 - End")
-    userInteraction = input("Press 1 or 2 \n") 
+    userInteraction = input("Press 1,2 or 3 \n") 
 
     if userInteraction == '1':
         menueVisualization(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay)
@@ -58,13 +58,13 @@ def mainMenue(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay)
 
 def menueVisualization(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay):
 
-    print("What are you interested in? \n 1 - Tripduration \n 2 - Number of Trips \n 3 - Start/End point of Trips \n 4 - Bikes per Station \n 5 - Weather data \n 6 - Go back")
-    userInteraction = input("Choose a number <1 - 6> \n")
+    print("What are you interested in? \n 1 - Tripduration \n 2 - Number of Trips \n 3 - Start/End point of Trips \n 4 - Bikes per Station \n 5 - Weather data \n 6 - Heat map \n 7 - Go back")
+    userInteraction = input("Choose a number <1 - 7> \n")
     userInteraction = int(userInteraction)
 
-    if userInteraction in [1,2,3,4,5]:
+    if userInteraction in [1,2,3,4,5,6]:
         visualize(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,userInteraction)
-    elif userInteraction == 6:
+    elif userInteraction == 7:
         mainMenue(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay)
     else:
         print("Invalid input")
@@ -147,18 +147,18 @@ def rebuild(datapath = None):
     return dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay
 
 
-def visualize(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,type):
+def visualize(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,inputType):
 
-    if type == 1:
+    if inputType == 1:
         visualization.visualizeMeanTripLength(dfTrips).show()
         visualization.visualizeStdTripLength(dfTrips).show()
         visualization.visualizeTripLengthBoxplots(dfTrips)
     
-    elif type == 2:
+    elif inputType == 2:
         visualization.visualizeNumberOfTrips(dfTrips).show()
         visualization.visualizeDistributionOfTripsPerMonth(dfTrips).show()
 
-    elif type == 4:
+    elif inputType == 4:
         year = 2019
         month = int(input("Chose a month <1-12> \n"))
         day = int(input("Chose a day \n"))
@@ -172,10 +172,10 @@ def visualize(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,
         
         visualization.visualizeNumberOfBikesPerStationBarplot(pointInTime, dfStations, dfBikesPerStationIndex)
 
-    elif type == 5:
+    elif inputType == 5:
         visualization.visualizeWeatherData(dfWeather).show()
 
-    elif type == 3:
+    elif inputType == 3:
         while True:
 
             print("Do you want to see a interactive map, showing the start/end postal code region of trips per month?")
@@ -197,6 +197,11 @@ def visualize(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,
 
             else:
                 break
+
+    elif inputType == 6:
+        visualization.visualizeEventHeatmap(dfTrips,dfStations,'2019-11-29 12:00',startOrend='end',timeframe=5,max_val=30)
+        
+
 
     menueVisualization(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay)
 

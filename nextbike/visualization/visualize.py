@@ -353,9 +353,9 @@ def visualizeEventHeatmap(dfTrips,dfStations,date,startOrend,timeframe=12, max_v
             fill_color='#3186cc'
         ).add_to(m)
 
-    f = folium.FeatureGroup(name='Start locations early')
-    f2 = folium.FeatureGroup(name='Start locations later')
-    f3 = folium.FeatureGroup(name='Difference in start locations.')
+    f = folium.FeatureGroup(name='Locations early')
+    f2 = folium.FeatureGroup(name='Locations later',show=False)
+    f3 = folium.FeatureGroup(name='Difference in locations',show=False)
     # Add the heatmaps
     HeatMap(heatDataS, min_opacity=0.5,max_val=max_val,name='Start',radius=30).add_to(f)
     HeatMap(heatDataE, min_opacity=0.5,max_val=max_val,name='End',radius=30).add_to(f2)
@@ -369,4 +369,7 @@ def visualizeEventHeatmap(dfTrips,dfStations,date,startOrend,timeframe=12, max_v
     folium.Marker(location=['50.80882', '8.77262'],icon=folium.Icon(color='black')).add_to(m)
     folium.Marker(location=['50.81902', '8.77439'],icon=folium.Icon(color='black')).add_to(m)
     folium.Marker(location=['50.80196', '8.75835'],icon=folium.Icon(color='black')).add_to(m)
-    return m
+    
+    filepath=os.path.abspath('data/output/EventHeatmap.html')
+    m.save(filepath)
+    webbrowser.open(filepath)
