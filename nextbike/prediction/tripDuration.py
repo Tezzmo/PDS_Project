@@ -100,7 +100,7 @@ def retrainModel_DurationOfTrips(dfTrips,dfWeather, optimalHyperparameterTest):
         # Random search of parameters, using 3 fold cross validation, 
         # search across 150 different combinations, and use all available cores
         rf_random = RandomizedSearchCV(estimator = rf, param_distributions = random_grid,
-         n_iter = 150, cv = 3, verbose=2, random_state=45, n_jobs = -1)
+         n_iter = 50, cv = 3, verbose=2, random_state=45, n_jobs = -1)
         # Fit the random search model
         rf_random.fit(x_train,y_train)
 

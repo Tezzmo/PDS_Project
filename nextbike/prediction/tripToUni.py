@@ -37,9 +37,10 @@ def createFeatures(dfTrips, dfWeather):
 
 
 
-def trainKNNRegression(df):
-    dfTrips = df.copy()
-    dfTrips = createFeatures(dfTrips)
+def trainKNNRegression(df, dfWeather ):
+    
+    dfTrips = createFeatures(df,dfWeather)
+    
     # create new features
     dfTrips['tripToUniversity'] = dfTrips.apply(isStationAtUniversity, axis=1)
     dfTrips['isTerm'] = dfTrips.apply(isTerm, axis=1)
@@ -96,9 +97,9 @@ def trainKNNRegression(df):
     print(classification_report(y_true=y_test, y_pred=y_pred_rounded))
 
 
-def predictTripDirection(df):
+def predictTripDirection(df,dfWeather):
 
-    dfTrips = createFeatures(df)
+    dfTrips = createFeatures(df,dfWeather)
     X_pred = dfTrips.copy()
 
     # create new features
