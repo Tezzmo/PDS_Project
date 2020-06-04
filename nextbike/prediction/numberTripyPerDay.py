@@ -173,12 +173,14 @@ def retrainModel_NumberOfTrips(dfTripsPerDay, optimalHyperparameterTest):
     for i in range(len(y_test)):
         day.append(i)
 
-    plt.plot(day, y_test)
-    plt.plot(day,y_pred_test)
-    plt.title = "Visualization of the Prediction"
-    plt.xlabel = "Day"
-    plt.ylabel = "Number of Trips"
+    plt.plot(day, y_test,label="Number of trips")
+    plt.plot(day,y_pred_test,label="Predicted number of trips")
+    plt.title("Visualization of the Prediction")
+    plt.xlabel("Datapoint")
+    plt.ylabel("Number of Trips")
+    plt.legend(loc="upper left")
 
+    plt.tight_layout()
     plt.show()
 
 
@@ -235,7 +237,7 @@ def predict_NumberOfTrips(dfInput, model, sscaler, sscalerY):
     # Plot data
     # TODO Fix legend and axis
     plt.plot(range(0,len(prediction)),prediction, label="Predicted number of trips")
-    plt.title = "Visualization of the Prediction"
+    plt.title("Visualization of the Prediction")
     plt.xlabel("Datapoints of testset")
     plt.ylabel("Number of Trips")
     plt.legend(loc="upper left")
