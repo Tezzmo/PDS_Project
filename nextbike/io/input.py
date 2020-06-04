@@ -34,20 +34,65 @@ def read_precData(path=os.path.join(get_data_path(), "input/precipitation.txt"))
 
 
 
-def readFinalTrips(path=os.path.join(get_data_path(), "input/trips.csv")):
+###
+#Read in saved dataframes
+
+def readSavedWeather(path=os.path.join(get_data_path(), "input/dfWeather_Saved.csv")):
+    try:
+        df = pd.read_csv(path, sep=';')
+
+        df['date'] = pd.to_datetime(df['date'])
+        df.set_index('date', inplace = True)
+
+        return df
+
+    except FileNotFoundError:
+        print("Data file not found. Path was " + path)
+
+
+
+def readSavedTrips(path=os.path.join(get_data_path(), "input/dfTrips_Saved.csv")):
     try:
         df = pd.read_csv(path, sep=';')
 
         df['sTime'] = pd.to_datetime(df['sTime'])
         df['eTime'] = pd.to_datetime(df['eTime'])
         df['duration'] = pd.to_timedelta(df['duration'])
-   
-        df.drop('Unnamed: 0',axis=1,inplace=True)
-
 
         return df
+
     except FileNotFoundError:
-        print("Data file not found. Path was " + path) 
+        print("Data file not found. Path was " + path)
+
+
+def readSavedTripsPerDay(path=os.path.join(get_data_path(), "input/dfTripsPerDay_Saved.csv")):
+    try:
+        df = pd.read_csv(path, sep=';')
+        df['date'] = pd.to_datetime(df['date'])
+        return df
+
+    except FileExistsError:
+        print("Data file not found. Path was " + path)
+
+
+def readSavedStations(path=os.path.join(get_data_path(), "input/dfStations_Saved.csv")):
+    try:
+        df = pd.read_csv(path, sep=';')
+        return df
+
+    except FileExistsError:
+        print("Data file not found. Path was " + path)
+
+
+def readSavedBikesPerStation(path=os.path.join(get_data_path(), "input/dfBikesPerStationIndex_Saved.csv")):
+    try:
+        df = pd.read_csv(path, sep=';')
+        df['datetime'] = pd.to_datetime(df['datetime'])
+        df.set_index('datetime', inplace = True)
+        return df
+
+    except FileExistsError:
+        print("Data file not found. Path was " + path)
 
 #endregion
 
@@ -86,7 +131,7 @@ def getWeatherData():
 def preprocessData(df):
     # drop empty rows and unneccessary columns
     df.dropna(inplace=True)
-    df.drop(columns=['Unnamed: 0', 'p_spot', 'p_place_type', 'p_uid', 'p_bikes', 'p_bike'], inplace=True)
+    df.drop(columns=['Unnamed: 0', 'p_spot', 'p_place_type','p_uid'], inplace=True)
 
     # drop rows which are not a start or end of a trip
     df = df[(df['trip'] == 'start') |  (df['trip'] == 'end')]
@@ -104,7 +149,7 @@ def preprocessStationData(df):
     df['datetime'] = pd.to_datetime(df['datetime'])
     df = df[df['p_number'].notna()]
     df['p_number'] = df['p_number'].astype('int64')
-    
+
     return df
 
 #endregion
@@ -117,19 +162,19 @@ def createStations(df):
     pNumbersUnique = df.p_number.unique()
 
     # generate array of unique place names in the same order
-    pNamesUnique = []    
+    pNamesUnique = []
     for i in pNumbersUnique:
         pName = df[df['p_number'] == i].p_name.unique()[0]
         pNamesUnique.append(pName)
 
     # generate array of unique place latitude coordinates in the same order
-    pLatUnique = []    
+    pLatUnique = []
     for i in pNumbersUnique:
         pLat = df[df['p_number'] == i].p_lat.unique()[0]
         pLatUnique.append(pLat)
 
     # generate array of unique place longitude coordinates in the same order
-    pLongUnique = []    
+    pLongUnique = []
     for i in pNumbersUnique:
         pLong = df[df['p_number'] == i].p_lng.unique()[0]
         pLongUnique.append(pLong)
@@ -140,7 +185,7 @@ def createStations(df):
     df['pName'] = pNamesUnique
     df['pLat'] = pLatUnique
     df['pLong'] = pLongUnique
-    
+
     # set dataframe index and manipulate one column
     df = df.set_index('pNumber')
     df.at[0, 'pName'] = 'no fixed station'
@@ -164,23 +209,23 @@ def createStations(df):
 def createTrips(df):
     # cast datatype to datetime
     df['datetime'] = pd.to_datetime(df['datetime'])
-    
+
     dfTest = df
     tripList = []
     savedRow = []
     errorlines = []
-    
+
     # iterate over all rows of the dataframe
     for index, row in dfTest.iterrows():
-        
+
         # check if trip is start ort end
         if row['trip'] == 'start':
             savedRow = row
         if row['trip'] == 'end':
-            
+
             # check if trip start and end are in following rows have the same b_number
             if savedRow['b_number'] == row['b_number']:
-                
+
                 # create trip and append it
                 trip = {'bNumber': row['b_number'], 'sTime': savedRow['datetime'],
                         'eTime': row['datetime'], 'duration': (row['datetime'] - savedRow['datetime']),
@@ -190,23 +235,23 @@ def createTrips(df):
                         'bType': row['b_bike_type'], 'sPlaceNumber': savedRow['p_number'], 'ePlaceNumber': row['p_number']}
                 tripList.append(trip)
             else:
-                
+
                 # save rows with errors due to not fitting b_number
                 errorlines.append(index)
-            
+
             # clean savedRow
             savedRow['b_number'] = -1
-    
+
     # print rows with errors
     # if len(errorlines) > 0:
     #     print('Error at lines:')
     #     for line in errorlines:
     #         print(line)
-    
+
     # create dataframe out of list
     dfTrip = pd.DataFrame(tripList, columns=['bNumber', 'sTime', 'eTime', 'duration', 'sLong', 'sLat', 'eLong', 'eLat',
                                              'weekend', 'bType', 'sPlaceNumber', 'ePlaceNumber'])
-    
+
     return dfTrip
 
 
@@ -219,13 +264,11 @@ def createTripsPerDay(dfTrips,dfWeather):
     dfWeather['sDate'] = dfWeather['date'].dt.date
     dfWeather.drop('date',axis=1,inplace=True)
 
-    dfTrips['sDate'] = dfTrips['sTime'].dt.date
-
     #Create a df with date as key and # of trips per day
     tripsPerDay = []
 
-    for date in dfTrips['sDate'].unique():
-        tripsPerDay.append([date,len(dfTrips[dfTrips['sDate']==date])])
+    for date in dfTrips['sTime'].dt.date.unique():
+        tripsPerDay.append([date,len(dfTrips[dfTrips['sTime'].dt.date==date])])
 
     tripsPerDay = pd.DataFrame(tripsPerDay,columns=['date','tripsPerDay'])
 
@@ -247,7 +290,6 @@ def createTripsPerDay(dfTrips,dfWeather):
     mergedDf['month'] = mergedDf['date'].dt.month
     mergedDf['dayOfWeek'] = mergedDf['date'].dt.dayofweek
 
-    mergedDf.drop(['date'],axis=1,inplace=True)
     mergedDf.dropna(inplace=True)
     dfTripsPerDay = mergedDf
 
@@ -285,16 +327,16 @@ def read_model():
 
 # drop outliers
 def drop_outliers(df):
-    
+
     # add column with durationInSec
     df["durationInSec"] = df["duration"].dt.total_seconds().astype(int)
-    
+
     # calculate mean and standard deviation for each day and month
     meanTripLengthPerDay = (df.groupby(df.sTime.dt.date).durationInSec.mean(numeric_only=False)).to_dict()
     stdTripLengthPerDay = (df.groupby(df.sTime.dt.date).durationInSec.std()).to_dict()
     meanTripLengthPerMonth = (df.groupby(df.sTime.dt.month).durationInSec.mean(numeric_only=False)).to_dict()
     stdTripLengthPerMonth = (df.groupby(df.sTime.dt.month).durationInSec.std()).to_dict()
-    
+
     # initialize data
     date = datetime.date(2019, 1, 20)
     month = date.month
@@ -303,11 +345,11 @@ def drop_outliers(df):
     meanMonth = meanTripLengthPerMonth.get(month)
     stdMonth = stdTripLengthPerMonth.get(month)
     indexList = []
-    
+
     for index, row in df.iterrows():
-        
+
         newDate = row['sTime'].date()
-        
+
         # check if new mean and std need to be loaded
         if (newDate != date):
             date = newDate
@@ -316,13 +358,15 @@ def drop_outliers(df):
             stdDay = stdTripLengthPerDay.get(date)
             meanMonth = meanTripLengthPerMonth.get(month)
             stdMonth = stdTripLengthPerMonth.get(month)
-        
+
+
         # drop outliers that are not within the range of mean +- standard deviation
         if (row['durationInSec'] < (meanMonth - 0.5 * stdMonth) or row['durationInSec'] > (meanMonth + 0.5 * stdMonth)):
             indexList.append(index)
         elif (row['durationInSec'] < (meanDay - 1 * stdDay) or row['durationInSec'] > (meanDay + 1 * stdDay)):
             indexList.append(index)
-    
+
     df.drop(indexList, inplace=True)
-    
+
     return df
+

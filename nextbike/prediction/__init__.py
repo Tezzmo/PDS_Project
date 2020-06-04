@@ -1,1 +1,2 @@
-from .prediction import *
+from .tripDuration import *
+from .numberTripyPerDay import *
