@@ -101,7 +101,8 @@ def trainKNNRegression(df):
 
 def predictTripDirection(df):
 
-    X_pred = df.copy()
+    dfTrips = createFeatures(df)
+    X_pred = dfTrips.copy()
 
     # create new features
     X_pred['tripToUniversity'] = X_pred.apply(isStationAtUniversity, axis=1)

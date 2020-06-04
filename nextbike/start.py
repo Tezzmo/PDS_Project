@@ -230,7 +230,8 @@ def predict(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,ty
             prediction.trainKNNRegression(dfTrips,dfWeather)
 
         elif userInput == 2:
-            pass
+            prediction.predictTripDirection(dfTrips,dfWeather)
+            
 
     elif type == 3:
         print("Do you want to 1 - Train or 2 - Predict?")
