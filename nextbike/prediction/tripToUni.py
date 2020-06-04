@@ -74,8 +74,7 @@ def trainKNNRegression(df):
     X_train_scaled = st_scaler.transform(X_train)
     X_test_scaled = st_scaler.transform(X_test)
     pathScaler = os.path.join(utils.get_ml_path(), "TripToUni/scaler.pkl")
-    
-    pickle.dump(st_scaler, open(pathScaler, 'wb'))
+    dump(st_scaler,pathScaler)
 
     #make an instance of the Model which explains 99% of Variance
     pca = PCA(0.99)
@@ -83,15 +82,13 @@ def trainKNNRegression(df):
     X_train_scaled = pca.transform(X_train_scaled)
     X_test_scaled = pca.transform(X_test_scaled)
     pathPCA = os.path.join(utils.get_ml_path(), "TripToUni/pca.pkl")
-    
-    pickle.dump(pca, open(pathPCA, 'wb'))
+    dump(pca,pathPCA)
 
     knn = KNeighborsRegressor()
     knn.fit(X_train_scaled, y_train)
     y_pred = knn.predict(X_test_scaled)
     pathKNN = os.path.join(utils.get_ml_path(), "TripsToUni/knn.pkl")
-    
-    pickle.dump(knn, open(pathKNN, 'wb'))
+    dump(knn,pathKNN)
     
     # round predicted values and return classification_report
     y_pred_rounded = np.round(y_pred, 0)
@@ -138,19 +135,20 @@ def predictTripDirection(df):
 
     try:
         pathScaler = os.path.join(utils.get_ml_path(), "TripToUni/scaler.pkl")
-        st_scaler = pickle.load(open(pathScaler, 'rb'))
+        st_scaler = load(pathScaler)
+
     except FileNotFoundError:
         return "Standard Scaler not found. Please train a model first."
 
     try:
         pathPCA = os.path.join(utils.get_ml_path(), "TripToUni/PCA.pkl")
-        pca = pickle.load(open(pathPCA, 'rb'))
+        pca = load(pathPCA)
     except FileNotFoundError:
         return "Principal Component Analysis not found. Please train a model first."
 
     try:
         pathKNN = os.path.join(utils.get_ml_path(), "TripToUni/KNN.pkl")
-        knn = pickle.load(open(pathKNN, 'rb'))
+        knn = load(pathKNN)
     except FileNotFoundError:
         return "K-Nearest Neighbor not found. Please train a model first."
     
