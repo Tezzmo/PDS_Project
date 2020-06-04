@@ -74,7 +74,7 @@ def trainKNNRegression(df, dfWeather ):
     st_scaler.fit(X_train)
     X_train_scaled = st_scaler.transform(X_train)
     X_test_scaled = st_scaler.transform(X_test)
-    pathScaler = os.path.join(utils.get_ml_path(), "TripToUni/scaler.pkl")
+    pathScaler = os.path.join(utils.get_ml_path(), "tripsToUni/scaler.pkl")
     dump(st_scaler,pathScaler)
 
     #make an instance of the Model which explains 99% of Variance
@@ -82,13 +82,13 @@ def trainKNNRegression(df, dfWeather ):
     pca.fit(X_train_scaled)
     X_train_scaled = pca.transform(X_train_scaled)
     X_test_scaled = pca.transform(X_test_scaled)
-    pathPCA = os.path.join(utils.get_ml_path(), "TripToUni/pca.pkl")
+    pathPCA = os.path.join(utils.get_ml_path(), "tripsToUni/pca.pkl")
     dump(pca,pathPCA)
 
     knn = KNeighborsRegressor()
     knn.fit(X_train_scaled, y_train)
     y_pred = knn.predict(X_test_scaled)
-    pathKNN = os.path.join(utils.get_ml_path(), "TripsToUni/knn.pkl")
+    pathKNN = os.path.join(utils.get_ml_path(), "tripsToUni/knn.pkl")
     dump(knn,pathKNN)
     
     # round predicted values and return classification_report
@@ -135,20 +135,20 @@ def predictTripDirection(df,dfWeather):
     X.dropna(inplace=True)
 
     try:
-        pathScaler = os.path.join(utils.get_ml_path(), "TripToUni/scaler.pkl")
+        pathScaler = os.path.join(utils.get_ml_path(), "tripsToUni/scaler.pkl")
         st_scaler = load(pathScaler)
 
     except FileNotFoundError:
         return "Standard Scaler not found. Please train a model first."
 
     try:
-        pathPCA = os.path.join(utils.get_ml_path(), "TripToUni/PCA.pkl")
+        pathPCA = os.path.join(utils.get_ml_path(), "tripsToUni/PCA.pkl")
         pca = load(pathPCA)
     except FileNotFoundError:
         return "Principal Component Analysis not found. Please train a model first."
 
     try:
-        pathKNN = os.path.join(utils.get_ml_path(), "TripToUni/KNN.pkl")
+        pathKNN = os.path.join(utils.get_ml_path(), "tripsToUni/KNN.pkl")
         knn = load(pathKNN)
     except FileNotFoundError:
         return "K-Nearest Neighbor not found. Please train a model first."
