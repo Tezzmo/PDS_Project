@@ -1,4 +1,5 @@
 import folium
+from folium.plugins import HeatMap
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
@@ -6,6 +7,7 @@ import numpy as np
 import scipy.stats as stats
 import os
 import webbrowser
+
 
 
 # visualize number of bikes per fixed station and time
@@ -310,5 +312,64 @@ def visualizeWeatherData(df):
 
     plt.title('Temperature & Precipitation in Marburg (2019)',size=14)
     plt.xticks(np.arange(0,52,4.7), ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'])
-
+    
     return plt
+
+# timeframe is the amount of hours around the cutTime and date that are rendered. Date example '2019-08-01'
+def visualizeEventHeatmap(dfTrips,dfStations,date,startOrend,timeframe=12, max_val=50 ):
+    if startOrend == 'start':
+        Lat1 = 'sLat'
+        Long1 = 'sLong'
+        Lat2 = 'sLat'
+        Long2 = 'sLong'
+    elif startOrend == 'end':
+        Lat1 = 'eLat'
+        Long1 = 'eLong'
+        Lat2 = 'eLat'
+        Long2 = 'eLong'
+    else:
+        Lat1 = 'eLat'
+        Long1 = 'eLong'
+        Lat2 = 'sLat'
+        Long2 = 'sLong'
+    # Preparing the data
+    movingDataS = dfTrips.loc[(dfTrips['sTime'] >= (np.datetime64(date) - np.timedelta64(timeframe,'h'))) & (dfTrips['sTime'] <= (np.datetime64(date)))]
+    movingDataE = dfTrips.loc[(dfTrips['sTime'] >= (np.datetime64(date) )) & (dfTrips['sTime'] <= (np.datetime64(date) + np.timedelta64(timeframe,'h')))]
+    
+
+    heatDataS = np.c_[movingDataS[[Lat1,Long1]].values.tolist(),np.ones(len(movingDataS[Lat1]))*(1)].tolist()
+    heatDataE = np.c_[movingDataE[[Lat2,Long2]].values.tolist(),np.ones(len(movingDataE[Lat2]))*(1)].tolist()
+    heatDataSE = np.r_[np.c_[movingDataS[[Lat1,Long1]].values.tolist(),np.ones(len(movingDataS[Lat1]))*(1)].tolist(),np.c_[movingDataE[[Lat2,Long2]].values.tolist(),np.ones(len(movingDataE[Lat2]))*(-1)].tolist()].tolist()
+
+    # Create the map
+    m = folium.Map(location=[50.8008, 8.7667], zoom_start=13, tiles='Stamen Toner')
+    # Add stations as black circle
+    for index, row in dfStations.iloc[1:].iterrows():     
+        folium.CircleMarker(
+            location=[row['pLat'], row['pLong']],
+            popup=row['pName'],
+            color='black',
+            fill=True,
+            fill_color='#3186cc'
+        ).add_to(m)
+
+    f = folium.FeatureGroup(name='Locations early')
+    f2 = folium.FeatureGroup(name='Locations later',show=False)
+    f3 = folium.FeatureGroup(name='Difference in locations',show=False)
+    # Add the heatmaps
+    HeatMap(heatDataS, min_opacity=0.5,max_val=max_val,name='Start',radius=30).add_to(f)
+    HeatMap(heatDataE, min_opacity=0.5,max_val=max_val,name='End',radius=30).add_to(f2)
+    HeatMap(heatDataSE, min_opacity=0.5,max_val=max_val,name='End2',radius=30,show=False).add_to(f3)
+    # Add layercontrol
+    f.add_to(m)
+    f2.add_to(m)
+    f3.add_to(m)
+    folium.LayerControl().add_to(m)
+    # Add markers for the event
+    folium.Marker(location=['50.80882', '8.77262'],icon=folium.Icon(color='black')).add_to(m)
+    folium.Marker(location=['50.81902', '8.77439'],icon=folium.Icon(color='black')).add_to(m)
+    folium.Marker(location=['50.80196', '8.75835'],icon=folium.Icon(color='black')).add_to(m)
+    
+    filepath=os.path.abspath('data/output/EventHeatmap.html')
+    m.save(filepath)
+    webbrowser.open(filepath)
