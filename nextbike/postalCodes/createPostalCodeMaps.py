@@ -1,13 +1,11 @@
 from sklearn.neighbors import NearestNeighbors
 from sklearn.externals import joblib
-from IPython.display import HTML
 from .utils import get_gejson_path
-
 import pandas as pd
 import datetime
 import folium
 import os
-
+import webbrowser
 
 
 #Give dfTrips including postalCode
@@ -44,12 +42,16 @@ def createTripsPerPostalCodeMap(dfTrips,month,start):
     #Read in gejson of postal ocde area boundaries
     geoDataPath = os.path.join(get_gejson_path(), "input/postleitzahlen-deutschland.geojson")
 
-    map = folium.Map(location=[50.802578, 8.766052], default_zoom_start=10)
+    fig = folium.Figure(width=500, height=500)
+    map = folium.Map(location=[50.801716, 8.766453], zoom_start=11, min_zoom = 10, tiles="openstreetmap").add_to(fig)
+    
     map.choropleth(geo_data=geoDataPath,
              data=dfTripsPerPostalCode, # my dataset
              columns=['postalCode','numberOfStarts'], # zip code is here for matching the geojson zipcode, sales price is the column that changes the color of zipcode areas
              key_on='feature.properties.plz', # this path contains zipcodes in str type, this zipcodes should match with our ZIP CODE column
              fill_color='BuPu', fill_opacity=0.7, line_opacity=0.2,
              legend_name='numberOfStarts')
-
-    return map 
+    
+    filepath=os.path.abspath('data/output/PostalCodeMap.html')
+    map.save(filepath)
+    webbrowser.open(filepath)

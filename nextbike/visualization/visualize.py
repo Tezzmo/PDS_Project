@@ -4,6 +4,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 import numpy as np
+import scipy.stats as stats
+import os
+import webbrowser
 
 
 
@@ -14,16 +17,19 @@ def visualizeNumberOfBikesPerStationMap(pointInTime, dfStations, dfStationBikeNu
     m = folium.Map(location=[50.8008, 8.7667], zoom_start=13, tiles='Stamen Toner')
 
     # get number of bikes for all stations at specific time
+    
     bikesPerStation = dfStationBikeNumber.loc[pointInTime]
     
     # iterrate over all stations
     for index, row in dfStations.iloc[1:].iterrows():     
-
+        
         colorStation = ''
-
+        
+        #print(bikesPerStation.info())
         # get number of bikes for station
-        radiusStation = int(bikesPerStation[int(row.name)])
-
+        # cast np.int64 to int. Else it brakes to JSON dump.
+        radiusStation = int(dfStationBikeNumber.loc[(dfStationBikeNumber.index == pointInTime), [str(index)]].values[0][0])
+        
         # set colorcode for marker based on number of bikes
         if  radiusStation < 11:
             colorStation = '#ff0000'
@@ -59,9 +65,11 @@ def visualizeNumberOfBikesPerStationMap(pointInTime, dfStations, dfStationBikeNu
                 ''' 
 
     m.get_root().html.add_child(folium.Element(legend_html))
-
+    print(type(m))
     #return final map
-    return m
+    filepath=os.path.abspath('data/output/BikesPerStationMap.html')
+    m.save(filepath)
+    webbrowser.open(filepath)
 
 def visualizeNumberOfBikesPerStationBarplot(pointInTime, dfStations, dfStationBikeNumber):
     bikesPerStation = dfStationBikeNumber.loc[pointInTime].array
@@ -80,19 +88,19 @@ def visualizeMeanTripLength(df):
     meanTripLengthPerHour = df.groupby(df.sTime.dt.hour).durationInSec.mean(numeric_only=False)
     # plot figures
     plt.rcParams["figure.figsize"][0] = 30
-    plt.rcParams["figure.figsize"][1] = 5
+    plt.rcParams["figure.figsize"][1] = 15
     # Mean trip length per Month
-    plt.subplot(1, 3, 1)
+    plt.subplot(3, 1, 1)
     plt.plot(meanTripLengthPerMonth.index, meanTripLengthPerMonth/60, 'x-')
     plt.xlabel("Per month")
-    plt.ylabel('Mean trip length in minutes')
-    # Mean trip length per Day
-    plt.subplot(1, 3, 2)
-    plt.plot(meanTripLengthPerDayOfWeek.index, meanTripLengthPerDayOfWeek/60, 'x-')
     plt.title("Mean trip length")
+    # Mean trip length per Day
+    plt.subplot(3, 1, 2)
+    plt.plot(meanTripLengthPerDayOfWeek.index, meanTripLengthPerDayOfWeek/60, 'x-')
     plt.xlabel("Per day")
+    plt.ylabel('Mean trip length in minutes')
     # Mean trip length per Hour
-    plt.subplot(1, 3, 3)
+    plt.subplot(3, 1, 3)
     plt.plot(meanTripLengthPerHour.index, meanTripLengthPerHour/60, 'x-')
     plt.xlabel("Per hour")
 
@@ -104,19 +112,19 @@ def visualizeStdTripLength(df):
     stdTripLengthPerHour = df.groupby(df.sTime.dt.hour).durationInSec.std()
     # plot figures
     plt.rcParams["figure.figsize"][0] = 30
-    plt.rcParams["figure.figsize"][1] = 5
+    plt.rcParams["figure.figsize"][1] = 15
     # Standard deviation of trip length per Month
-    plt.subplot(1, 3, 1)
+    plt.subplot(3, 1, 1)
     plt.plot(stdTripLengthPerMonth.index, stdTripLengthPerMonth/60, 'x-')
     plt.xlabel("Per month")
-    plt.ylabel('Standard deviation in minutes')
-    # Standard deviation of trip length per Day
-    plt.subplot(1, 3, 2)
-    plt.plot(stdTripLengthPerDayOfWeek.index, stdTripLengthPerDayOfWeek/60, 'x-')
     plt.title("Standard deviation of trip length")
+    # Standard deviation of trip length per Day
+    plt.subplot(3, 1, 2)
+    plt.plot(stdTripLengthPerDayOfWeek.index, stdTripLengthPerDayOfWeek/60, 'x-')
     plt.xlabel("Per day")
+    plt.ylabel('Standard deviation in minutes')
     # Standard deviation of trip length per Hour
-    plt.subplot(1, 3, 3)
+    plt.subplot(3, 1, 3)
     plt.plot(stdTripLengthPerHour.index, stdTripLengthPerHour/60, 'x-')
     plt.xlabel("Per hour")
 
@@ -129,22 +137,22 @@ def visualizeNumberOfTrips(df):
 
     # plot figures
     plt.rcParams["figure.figsize"][0] = 30
-    plt.rcParams["figure.figsize"][1] = 5
+    plt.rcParams["figure.figsize"][1] = 15
 
     # Number of Trips per Month
-    plt.subplot(1, 3, 1)
+    plt.subplot(3, 1, 1)
     plt.plot(numberOfTripsPerMonth.index, numberOfTripsPerMonth)
     plt.xlabel('Month')
-    plt.ylabel('Number of Rentals')
-
-    # Number of Trips per Day
-    plt.subplot(1, 3, 2)
-    plt.plot(numberOfTripsPerDay.index, numberOfTripsPerDay)
-    plt.xlabel('Day')
     plt.title("Number of Trips in a given Time")
 
+    # Number of Trips per Day
+    plt.subplot(3, 1, 2)
+    plt.plot(numberOfTripsPerDay.index, numberOfTripsPerDay)
+    plt.xlabel('Day')
+    plt.ylabel('Number of Rentals')
+
     # Number of Trips per Hour
-    plt.subplot(1, 3, 3)
+    plt.subplot(3, 1, 3)
     plt.plot(numberOfTripsPerHour.index, numberOfTripsPerHour)
     plt.xlabel('Hour')
 
