@@ -16,14 +16,14 @@ def main(start):
 
     print("Welcome")
     print("Your options: \n1 - Rebuild the model \n2 - Rebuild the model on new data \n3 - Use saved model")
-    userInteraction = input("Press 1, 2 or 3") 
+    userInteraction = input("Press 1, 2 or 3 \n") 
 
     if userInteraction == '1':
         print('Start to rebuild the model, this will take several minutes')
         dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay = rebuild()
     elif userInteraction == '2':
         print('Input the filename in data/input/')
-        fileInput = input('Exp.: data.csv')
+        fileInput = input('Exp.: data.csv \n')
         dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay = rebuild()
     
     elif userInteraction == '3':
@@ -38,7 +38,7 @@ def main(start):
 def mainMenue(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay):
 
     print("Your options: \n1 - Visualize \n2 - Predict \n3 - End")
-    userInteraction = input("Press 1 or 2") 
+    userInteraction = input("Press 1 or 2 \n") 
 
     if userInteraction == '1':
         menueVisualization(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay)
@@ -59,7 +59,7 @@ def mainMenue(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay)
 def menueVisualization(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay):
 
     print("What are you interested in? \n 1 - Tripduration \n 2 - Number of Trips \n 3 - Start/End point of Trips \n 4 - Bikes per Station \n 5 - Weather data \n 6 - Go back")
-    userInteraction = input("Choose a number <1 - 6>")
+    userInteraction = input("Choose a number <1 - 6> \n")
     userInteraction = int(userInteraction)
 
     if userInteraction in [1,2,3,4,5,6]:
@@ -76,7 +76,7 @@ def menueVisualization(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTri
 def menuePrediction(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay):
 
     print("What are you interested in? \n 1 - Tripduration \n 2 - Direction of trips \n 3 - Number of trips  \n 4 - Go back")
-    userInteraction = input("Choose a number <1 - 4>")
+    userInteraction = input("Choose a number <1 - 4> \n")
     userInteraction = int(userInteraction)
 
     if userInteraction in [1,2,3]:
@@ -160,10 +160,10 @@ def visualize(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,
 
     elif type == 4:
         year = 2019
-        month = int(input("Chose a month <1-12>"))
-        day = int(input("Chose a day"))
-        hour = int(input("Chose a hour <0-23>"))
-        minute = int(input("Chose a minute <0-59>"))
+        month = int(input("Chose a month <1-12> \n"))
+        day = int(input("Chose a day \n"))
+        hour = int(input("Chose a hour <0-23> \n"))
+        minute = int(input("Chose a minute <0-59> \n"))
         secound = 0
 
         pointInTime = datetime.datetime(year,month,day,hour,minute,secound)
@@ -179,14 +179,14 @@ def visualize(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,
         while True:
 
             print("Do you want to see a interactive map, showing the start/end postal code region of trips per month?")
-            userInput = input("<y,n>")
+            userInput = input("<y,n> \n")
 
             if userInput.upper() == 'Y':
                 print("Do you want to see 1 - start or 2 - end postal code area?")
-                userInput1 = input("<1,2>")
+                userInput1 = input("<1,2> \n")
 
                 print("Choose a month")
-                userInput2 = input("<1-12>")
+                userInput2 = input("<1-12> \n")
 
                 if userInput1 == '1':
                     postalCodes.createTripsPerPostalCodeMap(dfTrips,int(userInput2),True)
@@ -213,11 +213,11 @@ def predict(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,ty
 
     elif type == 3:
         print("Do you want to 1 - Train or 2 - Predict?")
-        userInput = int(input("<1,2>"))
+        userInput = int(input("<1,2> \n"))
 
         if userInput == 1:
             print("Do you want to use Hyperparameteroptimization?")
-            userInput2 = input("<y,n>")
+            userInput2 = input("<y,n> \n")
                 
             if userInput2.upper() == 'Y':
                     prediction.retrainModel_NumberOfTrips(dfTripsPerDay,True)
@@ -227,7 +227,7 @@ def predict(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,ty
             model, sscaler, sscalerY = prediction.loadModel_NumberOfTrips()
             prediction.predict_NumberOfTrips(dfTripsPerDay, model, sscaler,sscalerY)
         
-        menuePrediction(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay)
+    menuePrediction(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay)
 
 
 

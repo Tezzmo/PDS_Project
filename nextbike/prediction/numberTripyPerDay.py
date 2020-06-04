@@ -14,6 +14,53 @@ from sklearn.externals.joblib import dump, load
 from . import utils
 import os
 
+def createFeatures(dfTripsPerDay):
+
+    ###Feature creation
+    #Get the date of yesterday and one week ago
+    dfTripsPerDay['date_yesterday'] = pd.DatetimeIndex(dfTripsPerDay['date']) - pd.DateOffset(1)
+    dfTripsPerDay['date_oneWeekAgo'] = pd.DatetimeIndex(dfTripsPerDay['date']) - pd.DateOffset(7)
+
+    #Get the number of trips for this dates
+    tripsLastDay = []
+    tripsOneWeekAgo = []
+
+    lastDay = list(dfTripsPerDay['date_yesterday'].unique())
+    oneWeekEarlier = list(dfTripsPerDay['date_oneWeekAgo'].unique())
+
+    #Try/except is necessary, because of the outlier drop 
+    for date in lastDay:
+        try:
+            valueDay = dfTripsPerDay[dfTripsPerDay['date'] == date]['tripsPerDay'].values[0]
+        except:
+            valueDay = None
+
+        tripsLastDay.append(valueDay)
+
+
+    for date in oneWeekEarlier:
+        try:
+            valueWeek = dfTripsPerDay[dfTripsPerDay['date'] == date]['tripsPerDay'].values[0]
+        except:
+            valueWeek = None
+
+        tripsOneWeekAgo.append(valueWeek)
+
+    
+    #Fill in created features
+    dfTripsPerDay['tripsLastDay'] = tripsLastDay
+    dfTripsPerDay['tripsOneWeekAgo'] = tripsOneWeekAgo
+
+    #Drop Dates and Features with a low correlation
+    dfTripsPerDay.dropna(inplace=True)
+    dfTripsPerDay.drop(['date','date_yesterday','date_oneWeekAgo'],axis=1,inplace=True)
+    dfTripsPerDay.drop(['day','month'],axis=1,inplace=True)
+
+    return dfTripsPerDay
+
+
+
+
 
 def retrainModel_NumberOfTrips(dfTripsPerDay, optimalHyperparameterTest):
 
@@ -36,46 +83,8 @@ def retrainModel_NumberOfTrips(dfTripsPerDay, optimalHyperparameterTest):
         else:
             dfTripsPerDayFilterd = pd.concat([dfTripsPerDayFilterd,row])
 
-
-    ###Feature creation
-    #Get the date of yesterday and one week ago
-    dfTripsPerDayFilterd['date_yesterday'] = pd.DatetimeIndex(dfTripsPerDayFilterd['date']) - pd.DateOffset(1)
-    dfTripsPerDayFilterd['date_oneWeekAgo'] = pd.DatetimeIndex(dfTripsPerDayFilterd['date']) - pd.DateOffset(7)
-
-    #Get the number of trips for this dates
-    tripsLastDay = []
-    tripsOneWeekAgo = []
-
-    lastDay = list(dfTripsPerDayFilterd['date_yesterday'].unique())
-    oneWeekEarlier = list(dfTripsPerDayFilterd['date_oneWeekAgo'].unique())
-
-    #Try/except is necessary, because of the outlier drop 
-    for date in lastDay:
-        try:
-            valueDay = dfTripsPerDayFilterd[dfTripsPerDayFilterd['date'] == date]['tripsPerDay'].values[0]
-        except:
-            valueDay = None
-
-        tripsLastDay.append(valueDay)
-
-
-    for date in oneWeekEarlier:
-        try:
-            valueWeek = dfTripsPerDayFilterd[dfTripsPerDayFilterd['date'] == date]['tripsPerDay'].values[0]
-        except:
-            valueWeek = None
-
-        tripsOneWeekAgo.append(valueWeek)
-
-    
-    #Fill in created features
-    dfTripsPerDayFilterd['tripsLastDay'] = tripsLastDay
-    dfTripsPerDayFilterd['tripsOneWeekAgo'] = tripsOneWeekAgo
-
-    #Drop Dates and Features with a low correlation
-    dfTripsPerDayFilterd.dropna(inplace=True)
-    dfTripsPerDayFilterd.drop(['date','date_yesterday','date_oneWeekAgo'],axis=1,inplace=True)
-    dfTripsPerDayFilterd.drop(['day','month'],axis=1,inplace=True)
+    #Create features
+    dfTripsPerDayFilterd = createFeatures(dfTripsPerDayFilterd)
 
     #Make a train test split
     Y = dfTripsPerDayFilterd['tripsPerDay']
@@ -188,10 +197,10 @@ def retrainModel_NumberOfTrips(dfTripsPerDay, optimalHyperparameterTest):
 
     # Save the scaler
     pathScaler = os.path.join(utils.get_ml_path(), "numberOfTrips/randomForestRegressor_NumberOfTripsScaler.bin")
-    dump(reg,pathScaler)
+    dump(sscaler,pathScaler)
 
     pathScalerY = os.path.join(utils.get_ml_path(), "numberOfTrips/randomForestRegressor_NumberOfTripsScalerY.bin")
-    dump(reg,pathScalerY)
+    dump(sscalerY,pathScalerY)
     
 
 def loadModel_NumberOfTrips():
@@ -220,21 +229,25 @@ def loadModel_NumberOfTrips():
     return rfr,sscaler, sscalerY
 
 def predict_NumberOfTrips(dfInput, model, sscaler, sscalerY):
-    df = dfInput.copy()
-    features = prediction.createFeatures(df)
-    features.drop(inplace=True,labels=['tripsPerDay'],axis=1,errors='ignore').values
-    xScaled = sscaler.transform(features)
-    prediction = regressor.predict(xScaled)
-    #Data
-    dfTripsPerDayRdy = createFeatures(dfTripsPerDay)
-    prediction = model.predict(dfTripsPerDayRdy)
-    prediction = sscalerY.inverse_transform(prediction)
 
+    #Create inputs dataframe and scale it
+    df = dfInput.copy()
+    features = createFeatures(df)
+    features.drop('tripsPerDay',inplace=True,axis=1,errors='ignore')
+    featureValues = features.values
+    xScaled = sscaler.transform(featureValues)
+
+    #Predict and inverse transformation
+    prediction = model.predict(xScaled)
+    prediction = sscalerY.inverse_transform(prediction)
+    prediction = prediction.reshape(-1, 1)
+    print(len(prediction))
+    print(len(features))
+    print(len(df))
     # Save data
-    path = os.path.join(utils.get_prediciton_path(), "output/NumberOfTripPrediction.csv")
-    
-    df['tripsPerDay'] = prediction
-    df.to_csv(path, index=False)
+    path = os.path.join(utils.get_prediction_path(), "output/NumberOfTripPrediction.csv")
+    features['tripsPerDay'] = prediction
+    features.to_csv(path, index=False)
 
     # Plot data
     # TODO Fix legend and axis
