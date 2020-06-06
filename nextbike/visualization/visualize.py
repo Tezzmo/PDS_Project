@@ -77,6 +77,9 @@ def visualizeNumberOfBikesPerStationBarplot(pointInTime, dfStations, dfStationBi
     plt.figure(figsize=(20,10))
     plt.bar(stationNames, bikesPerStation)
     plt.xticks(rotation=90)
+    plt.xlabel("Fixed Stations")
+    plt.ylabel('Number of available Bikes')
+    plt.title('Available Bikes per fixed Station')
     plt.show()
     
   
