@@ -55,8 +55,7 @@ def createFeatures(dfTrips, dfWeather):
 def retrainModel_DurationOfTrips(dfTrips,dfWeather, optimalHyperparameterTest):
     
     dfTrips = createFeatures(dfTrips,dfWeather)
-    print(dfTrips.info())
-    print(dfTrips.head(2))
+
     # Create train test split
     Y = dfTrips['durationInSec']
     X = dfTrips.drop('durationInSec',axis=1).values
@@ -190,11 +189,11 @@ def predict_DurationOfTrips(dfInput,dfWeather, model, sscaler, sscalerY):
     
     
     # Save data
-    path = os.path.join(utils.get_prediction_path(), "output/NumberOfTripPrediction.csv")
-    features['tripsPerDay'] = prediction
+    path = os.path.join(utils.get_prediction_path(), "output/DurationOfTripsPrediction.csv")
+    features['durationOfTrips'] = prediction
     features.to_csv(path, index=False)
 
     # Plot data
     # TODO Fix legend and axis
-    print('Prediction done and saved to csv')
+    print('Prediction done and saved to csv --> "output/DurationOfTripsPrediction.csv"')
     return dfTrips

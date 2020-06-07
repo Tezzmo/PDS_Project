@@ -1,11 +1,11 @@
 import click
 import datetime
 from . import io
-from . import model
 from . import operation
 from . import postalCodes
 from . import visualization
 from . import prediction
+import warnings
 from IPython.display import display, Image
 from IPython.core.display import HTML
 
@@ -13,79 +13,95 @@ from IPython.core.display import HTML
 @click.option('--start',default=False, help="Train the model.")
 
 def main(start):
-
+    warnings.filterwarnings("ignore")
     print("Welcome")
-    print("Your options: \n1 - Rebuild the model \n2 - Rebuild the model on new data \n3 - Use saved model")
+    print("Your options: \n1 - Use default data to create all Dataframes \n2 - Use new data to create all Dataframes \n3 - Use saved Dataframes")
     userInteraction = input("Press 1, 2 or 3 \n") 
 
     if userInteraction == '1':
         print('Start to rebuild the model, this will take several minutes')
         dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay = rebuild()
+        mainMenue(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,True)
     elif userInteraction == '2':
         print('Input the filename in data/input/')
         fileInput = input('Exp.: data.csv \n')
-        dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay = rebuild()
+        dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay = rebuild(fileInput)
+        mainMenue(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,False)
     
     elif userInteraction == '3':
         print('Start to load all data')
         dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay = useExisting()
 
+        if len(dfTrips) == 563880:
+            mainMenue(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,True)
+        else:
+            mainMenue(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,False)
     
-    mainMenue(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay)
 
+def mainMenue(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,defaultData):
 
+    if defaultData == True:
+        print("Your options: \n1 - Visualize \n2 - Predict \n3 - End")
+        userInteraction = input("Press 1,2 or 3 \n") 
+    
+        if userInteraction == '1':
+            menueVisualization(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,defaultData)
 
-def mainMenue(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay):
+        elif userInteraction == '2':
+            menuePrediction(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,defaultData)
 
-    print("Your options: \n1 - Visualize \n2 - Predict \n3 - End")
-    userInteraction = input("Press 1,2 or 3 \n") 
+        elif userInteraction == '3':
+            pass
 
-    if userInteraction == '1':
-        menueVisualization(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay)
-
-    elif userInteraction == '2':
-        menuePrediction(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay)
-
-    elif userInteraction == '3':
-        pass
+        else:
+            print("Invalied Input")
+            mainMenue(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,defaultData)
 
     else:
-        print("Invalied Input")
-        mainMenue(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay)
+        print("Your options: \n1 - Predict \n2 - End")
+        userInteraction = input("Press 1 or 2 \n")
+
+        if userInteraction == '1':
+            menuePrediction(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,defaultData)
+
+        elif userInteraction == '2':
+            pass
+
+        else:
+            print("Invalied Input")
+            mainMenue(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,defaultData)
 
 
+def menueVisualization(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,defaultData):
 
-
-def menueVisualization(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay):
-
-    print("What are you interested in? \n 1 - Tripduration \n 2 - Number of Trips \n 3 - Start/End point of Trips \n 4 - Bikes per Station \n 5 - Weather data \n 6 - Heat map \n 7 - Go back")
+    print("What are you interested in? \n 1 - Trip duration \n 2 - Number of Trips \n 3 - Start/End point of Trips \n 4 - Bikes per Station \n 5 - Weather data \n 6 - Heat map \n 7 - Go back")
     userInteraction = input("Choose a number <1 - 7> \n")
     userInteraction = int(userInteraction)
 
     if userInteraction in [1,2,3,4,5,6]:
-        visualize(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,userInteraction)
+        visualize(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,userInteraction,defaultData)
     elif userInteraction == 7:
-        mainMenue(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay)
+        mainMenue(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,defaultData)
     else:
         print("Invalid input")
-        menueVisualization(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay)
+        menueVisualization(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,defaultData)
         
 
 
 
-def menuePrediction(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay):
+def menuePrediction(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,defaultData):
 
-    print("What are you interested in? \n 1 - Tripduration \n 2 - Direction of trips \n 3 - Number of trips  \n 4 - Go back")
+    print("What are you interested in? \n 1 - Trip duration \n 2 - Direction of trips \n 3 - Number of trips  \n 4 - Go back")
     userInteraction = input("Choose a number <1 - 4> \n")
     userInteraction = int(userInteraction)
 
     if userInteraction in [1,2,3]:
-        predict(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,userInteraction)
+        predict(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,userInteraction,defaultData)
     elif userInteraction == 4:
-        mainMenue(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay)
+        mainMenue(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,defaultData)
     else:
         print("Invalid input")
-        menueVisualization(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay)
+        menuePrediction(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,defaultData)
 
 
 
@@ -144,19 +160,25 @@ def rebuild(datapath = None):
     io.save_dfBikesPerStationIndexForReues(dfBikesPerStationIndex)
     io.save_tripsPerDayForReues(dfTripsPerDay)
 
+    io.save_Weather(dfWeather)
+    io.save_tripData(dfTrips)
+    io.save_StationData(dfStations)
+    io.save_dfBikesPerStationIndexs(dfBikesPerStationIndex)
+    io.save_tripsPerDay(dfTripsPerDay)
+
     return dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay
 
 
-def visualize(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,inputType):
+def visualize(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,inputType,defaultData):
 
     if inputType == 1:
         visualization.visualizeMeanTripLength(dfTrips).show()
         visualization.visualizeStdTripLength(dfTrips).show()
         visualization.visualizeTripLengthBoxplots(dfTrips)
+        visualization.visualizeDistributionOfTripsPerMonth(dfTrips).show()
     
     elif inputType == 2:
         visualization.visualizeNumberOfTrips(dfTrips).show()
-        visualization.visualizeDistributionOfTripsPerMonth(dfTrips).show()
 
     elif inputType == 4:
         year = 2019
@@ -203,25 +225,20 @@ def visualize(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,
         
 
 
-    menueVisualization(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay)
+    menueVisualization(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,defaultData)
 
 
 
 
-def predict(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,type):
+def predict(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,type,defaultData):
 
     if type == 1:
         print("Do you want to 1 - Train or 2 - Predict?")
         userInput = int(input("<1,2> \n"))
 
         if userInput == 1:
-            print("Do you want to use Hyperparameteroptimization?")
-            userInput2 = input("<y,n> \n")
             print('This can take a few minutes')    
-            if userInput2.upper() == 'Y':
-                    prediction.retrainModel_DurationOfTrips(dfTrips,dfWeather,True)
-            else:
-                prediction.retrainModel_DurationOfTrips(dfTrips,dfWeather,False)
+            prediction.retrainModel_DurationOfTrips(dfTrips,dfWeather,False)
         elif userInput == 2:
             print('This can take a few minutes')
             model, sscaler, sscalerY = prediction.loadModel_DurationOfTrips()
@@ -254,7 +271,7 @@ def predict(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,ty
             model, sscaler, sscalerY = prediction.loadModel_NumberOfTrips()
             prediction.predict_NumberOfTrips(dfTripsPerDay, model, sscaler,sscalerY)
         
-    menuePrediction(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay)
+    menuePrediction(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,defaultData)
 
 
 
