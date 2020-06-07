@@ -168,9 +168,9 @@ def visualizeNumberOfTrips(df):
 def visualizeTripLengthBoxplots(df):
     fig, axes = plt.subplots(3, 1, figsize=(20, 15))
     fig.suptitle('Trip Length in Boxplots')
-    df['month'] = pd.DatetimeIndex(df["sTime"]).month
-    df['day'] = pd.DatetimeIndex(df["sTime"]).day
-    df['hour'] = pd.DatetimeIndex(df["sTime"]).hour
+    df['month'] = df["sTime"].dt.month
+    df['day'] = df["sTime"].dt.day
+    df['hour'] = df["sTime"].dt.hour
 
     # Boxplots per Month
     sns.boxplot(y='durationInSec', x='month', data=df, palette="colorblind", showfliers=False, ax=axes[0])
@@ -203,6 +203,7 @@ def visualizeDistributionOfTripsPerMonth(df):
     # set size
     plt.rcParams["figure.figsize"][0] = 30
     plt.rcParams["figure.figsize"][1] = 30
+    plt.title("Distribution of trip lengths")
 
     # Plot for january
     plt.subplot(4, 3, 1)
@@ -210,6 +211,8 @@ def visualizeDistributionOfTripsPerMonth(df):
     plt.hist(jan, normed = True ,bins=100)
     plt.plot(x_jan, stats.norm.pdf(x_jan, meanTripLengthPerMonth.get(1), stdTripLengthPerMonth.get(1)))
     plt.title("January")
+    plt.xlabel('Trip duration in seconds')
+    plt.ylabel('Probability')
 
     # Plot for february
     plt.subplot(4, 3, 2)
@@ -217,6 +220,8 @@ def visualizeDistributionOfTripsPerMonth(df):
     plt.hist(feb, normed = True ,bins=100)
     plt.plot(x_feb, stats.norm.pdf(x_feb, meanTripLengthPerMonth.get(2), stdTripLengthPerMonth.get(2)))
     plt.title("February")
+    plt.xlabel('Trip duration in seconds')
+    plt.ylabel('Probability')
 
     # Plot for march
     plt.subplot(4, 3, 3)
@@ -224,6 +229,8 @@ def visualizeDistributionOfTripsPerMonth(df):
     plt.hist(mar, normed = True ,bins=100)
     plt.plot(x_mar, stats.norm.pdf(x_mar, meanTripLengthPerMonth.get(3), stdTripLengthPerMonth.get(3)))
     plt.title("March")
+    plt.xlabel('Trip duration in seconds')
+    plt.ylabel('Probability')
 
     # Plot for april
     plt.subplot(4, 3, 4)
@@ -231,6 +238,8 @@ def visualizeDistributionOfTripsPerMonth(df):
     plt.hist(apr, normed = True ,bins=100)
     plt.plot(x_apr, stats.norm.pdf(x_apr, meanTripLengthPerMonth.get(4), stdTripLengthPerMonth.get(4)))
     plt.title("April")
+    plt.xlabel('Trip duration in seconds')
+    plt.ylabel('Probability')
 
     # Plot for may
     plt.subplot(4, 3, 5)
@@ -238,6 +247,8 @@ def visualizeDistributionOfTripsPerMonth(df):
     plt.hist(may, normed = True ,bins=100)
     plt.plot(x_may, stats.norm.pdf(x_may, meanTripLengthPerMonth.get(5), stdTripLengthPerMonth.get(5)))
     plt.title("May")
+    plt.xlabel('Trip duration in seconds')
+    plt.ylabel('Probability')
 
     # Plot for jun
     plt.subplot(4, 3, 6)
@@ -245,6 +256,8 @@ def visualizeDistributionOfTripsPerMonth(df):
     plt.hist(jun, normed = True ,bins=100)
     plt.plot(x_jun, stats.norm.pdf(x_jun, meanTripLengthPerMonth.get(6), stdTripLengthPerMonth.get(6)))
     plt.title("June")
+    plt.xlabel('Trip duration in seconds')
+    plt.ylabel('Probability')
 
     # No data for july
     # Plot for july
@@ -253,6 +266,8 @@ def visualizeDistributionOfTripsPerMonth(df):
     #plt.hist(jul, normed = True ,bins=100)
     #plt.plot(x_jul, stats.norm.pdf(x_jul, meanTripLengthPerMonth.get(7), stdTripLengthPerMonth.get(7)))
     #plt.title("July")
+    #plt.xlabel('Trip duration in seconds')
+    #plt.ylabel('Probability')
 
     # Plot for august
     plt.subplot(4, 3, 8)
@@ -260,6 +275,8 @@ def visualizeDistributionOfTripsPerMonth(df):
     plt.hist(aug, normed = True ,bins=100)
     plt.plot(x_aug, stats.norm.pdf(x_aug, meanTripLengthPerMonth.get(8), stdTripLengthPerMonth.get(8)))
     plt.title("August")
+    plt.xlabel('Trip duration in seconds')
+    plt.ylabel('Probability')
 
     # Plot for september
     plt.subplot(4, 3, 9)
@@ -267,6 +284,8 @@ def visualizeDistributionOfTripsPerMonth(df):
     plt.hist(sep, normed = True ,bins=100)
     plt.plot(x_sep, stats.norm.pdf(x_sep, meanTripLengthPerMonth.get(9), stdTripLengthPerMonth.get(9)))
     plt.title("September")
+    plt.xlabel('Trip duration in seconds')
+    plt.ylabel('Probability')
 
     # Plot for october
     plt.subplot(4, 3, 10)
@@ -274,6 +293,8 @@ def visualizeDistributionOfTripsPerMonth(df):
     plt.hist(oct, normed = True ,bins=100)
     plt.plot(x_oct, stats.norm.pdf(x_oct, meanTripLengthPerMonth.get(10), stdTripLengthPerMonth.get(10)))
     plt.title("October")
+    plt.xlabel('Trip duration in seconds')
+    plt.ylabel('Probability')
 
     # Plot for november
     plt.subplot(4, 3, 11)
@@ -281,6 +302,8 @@ def visualizeDistributionOfTripsPerMonth(df):
     plt.hist(nov, normed = True ,bins=100)
     plt.plot(x_nov, stats.norm.pdf(x_nov, meanTripLengthPerMonth.get(11), stdTripLengthPerMonth.get(11)))
     plt.title("November")
+    plt.xlabel('Trip duration in seconds')
+    plt.ylabel('Probability')
 
     # Plot for december
     plt.subplot(4, 3, 12)
@@ -288,10 +311,13 @@ def visualizeDistributionOfTripsPerMonth(df):
     plt.hist(dec, normed = True ,bins=100)
     plt.plot(x_dec, stats.norm.pdf(x_dec, meanTripLengthPerMonth.get(12), stdTripLengthPerMonth.get(12)))
     plt.title("December")
+    plt.xlabel('Trip duration in seconds')
+    plt.ylabel('Probability')
 
+    plt.tight_layout()
     return plt
 
- # visualize the min/max temperature and precipitation in one graphic 
+# visualize the min/max temperature and precipitation in one graphic 
 def visualizeWeatherData(df):
     # calculate aggregate statistics
     minTemperaturePerWeek = df.groupby(df.index.week).temperature.min()
@@ -380,3 +406,46 @@ def visualizeEventHeatmap(dfTrips,dfStations,date,startOrend,timeframe=12, max_v
     filepath=os.path.abspath('data/output/EventHeatmap.html')
     m.save(filepath)
     webbrowser.open(filepath)
+
+# visualize the min/max temperature and precipitation with the number of trips in one graphic 
+def visualizeNumberOfTripsWithTemperatureAndPrecipitation(dfW, dfT):
+    dfWeather = dfW.copy()
+    dfTrips = dfT.copy()
+    # calculate aggregate statistics
+    minTemperaturePerWeek = dfWeather.groupby(dfWeather.index.week).temperature.min()
+    maxTemperaturePerWeek = dfWeather.groupby(dfWeather.index.week).temperature.max()
+    meanPrecipitationPerWeek = dfWeather.groupby(dfWeather.index.week).precipitation.mean()
+    numberOfTripsPerWeek = dfTrips.groupby(dfTrips.sTime.dt.week).bNumber.count()
+
+     # create plot
+    fig, ax1 = plt.subplots(figsize=(20, 10))
+
+    # create plot for number of trips
+    ax1.plot(numberOfTripsPerWeek.index, numberOfTripsPerWeek, '-xk', label="Number of trips")
+    ax1.set_ylabel('Number of trips per week',size=14)
+    ax1.axis([0,52,-0,30000])
+    ax1.legend(loc=2)
+
+    # create plot for temperature data
+    ax2 = ax1.twinx()
+    ax2.plot(minTemperaturePerWeek.index, minTemperaturePerWeek, '--r', label="Minimum temperature")
+    ax2.plot(maxTemperaturePerWeek.index, maxTemperaturePerWeek, '-r', label="Maximum temperature")
+    ax2.set_ylabel('Temperature (in $^\circ C$ )',size=14)
+    ax2.legend(loc=1)
+    # fill area between min and max line
+    ax2=plt.gca()
+    ax2.axis([0,52,-20,50])
+    plt.gca().fill_between(minTemperaturePerWeek.index, minTemperaturePerWeek, maxTemperaturePerWeek, facecolor='red', alpha=0.1)
+
+    ax3 = ax1.twinx()
+    ax3.bar(meanPrecipitationPerWeek.index, meanPrecipitationPerWeek)
+    ax3.set_ylabel('Precipitation (in mm)',size=14)
+    ax3.axis([0,52,0,0.2])
+    ax3.set_xlabel('Month',size=14)
+    ax3.spines["right"].set_position(("axes", 1.05))
+
+
+    plt.title('Number of Trips with Temperature & Precipitation in Marburg (2019)',size=14)
+    plt.xticks(np.arange(0,52,4.7), ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'])
+    
+    return plt.tight_layout()
