@@ -6,6 +6,7 @@ from . import operation
 from . import postalCodes
 from . import visualization
 from . import prediction
+import warnings
 from IPython.display import display, Image
 from IPython.core.display import HTML
 
@@ -13,6 +14,8 @@ from IPython.core.display import HTML
 @click.option('--start',default=False, help="Train the model.")
 
 def main(start):
+
+    warnings.filterwarnings("ignore")
 
     print("Welcome")
     print("Your options: \n1 - Rebuild the model \n2 - Rebuild the model on new data \n3 - Use saved model")
@@ -215,13 +218,8 @@ def predict(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,ty
         userInput = int(input("<1,2> \n"))
 
         if userInput == 1:
-            print("Do you want to use Hyperparameteroptimization?")
-            userInput2 = input("<y,n> \n")
             print('This can take a few minutes')    
-            if userInput2.upper() == 'Y':
-                    prediction.retrainModel_DurationOfTrips(dfTrips,dfWeather,True)
-            else:
-                prediction.retrainModel_DurationOfTrips(dfTrips,dfWeather,False)
+            prediction.retrainModel_DurationOfTrips(dfTrips,dfWeather,False)
         elif userInput == 2:
             print('This can take a few minutes')
             model, sscaler, sscalerY = prediction.loadModel_DurationOfTrips()
