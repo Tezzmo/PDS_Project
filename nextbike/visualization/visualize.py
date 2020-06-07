@@ -399,9 +399,9 @@ def visualizeEventHeatmap(dfTrips,dfStations,date,startOrend,timeframe=12, max_v
     f3.add_to(m)
     folium.LayerControl().add_to(m)
     # Add markers for the event
-    folium.Marker(location=['50.80882', '8.77262'],icon=folium.Icon(color='black')).add_to(m)
-    folium.Marker(location=['50.81902', '8.77439'],icon=folium.Icon(color='black')).add_to(m)
-    folium.Marker(location=['50.80196', '8.75835'],icon=folium.Icon(color='black')).add_to(m)
+    folium.Marker(location=['50.80882', '8.77262'],icon=folium.Icon(color='black'), popup='Marktplatz').add_to(m)
+    folium.Marker(location=['50.81902', '8.77439'],icon=folium.Icon(color='black'), popup='Hauptbahnhof').add_to(m)
+    folium.Marker(location=['50.80196', '8.75835'],icon=folium.Icon(color='black'), popup='Schulzentrum').add_to(m)
     
     filepath=os.path.abspath('data/output/EventHeatmap.html')
     m.save(filepath)
