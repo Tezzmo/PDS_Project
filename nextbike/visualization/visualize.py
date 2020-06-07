@@ -9,15 +9,13 @@ import os
 import webbrowser
 
 
-
-# visualize number of bikes per fixed station and time
+# visualize number of bikes per fixed station and time on a folium map
 def visualizeNumberOfBikesPerStationMap(pointInTime, dfStations, dfStationBikeNumber):
 
     # create map
     m = folium.Map(location=[50.8008, 8.7667], zoom_start=13, tiles='Stamen Toner')
 
     # get number of bikes for all stations at specific time
-    
     bikesPerStation = dfStationBikeNumber.loc[pointInTime]
     
     # iterrate over all stations
@@ -52,7 +50,7 @@ def visualizeNumberOfBikesPerStationMap(pointInTime, dfStations, dfStationBikeNu
             fill_color=colorStation
         ).add_to(m)
     
-    # add an color legend to the map
+    # add a color legend to the map
     legend_html =   '''
                 <div style="position: fixed; bottom: 50px; left: 50px; width: 150px; height: 130px; border:2px solid grey; z-index:9999; font-size:14px; background-color: white">
                 &nbsp; <b>Color Legend</b><br>
@@ -66,11 +64,14 @@ def visualizeNumberOfBikesPerStationMap(pointInTime, dfStations, dfStationBikeNu
 
     m.get_root().html.add_child(folium.Element(legend_html))
     print(type(m))
-    #return final map
+    
+    # open final map in browser
     filepath=os.path.abspath('data/output/BikesPerStationMap.html')
     m.save(filepath)
     webbrowser.open(filepath)
 
+
+# visualize number of bikes per fixed station and time by a barplot
 def visualizeNumberOfBikesPerStationBarplot(pointInTime, dfStations, dfStationBikeNumber):
     bikesPerStation = dfStationBikeNumber.loc[pointInTime].array
     stationNames = dfStations['pName'].iloc[1:].array
@@ -82,8 +83,8 @@ def visualizeNumberOfBikesPerStationBarplot(pointInTime, dfStations, dfStationBi
     plt.title('Available Bikes per fixed Station')
     plt.show()
     
-  
 
+# visualize the mean trip length per month, day and hour
 def visualizeMeanTripLength(df):
     # Calculate mean trip length per month, day, hour
     meanTripLengthPerMonth = df.groupby(df.sTime.dt.month).durationInSec.mean(numeric_only=False)
@@ -109,6 +110,7 @@ def visualizeMeanTripLength(df):
 
     return plt
 
+# visualize the standard deviation of the trip length per month, day and hour
 def visualizeStdTripLength(df):
     stdTripLengthPerMonth = df.groupby(df.sTime.dt.month).durationInSec.std()
     stdTripLengthPerDayOfWeek = df.groupby(df.sTime.dt.dayofweek).durationInSec.std()
@@ -133,6 +135,7 @@ def visualizeStdTripLength(df):
 
     return plt
 
+# visualize the number of trips per month, day and hour
 def visualizeNumberOfTrips(df):
     numberOfTripsPerMonth = df.groupby(df.sTime.dt.month).bNumber.count()
     numberOfTripsPerDay = df.groupby(df.sTime.dt.dayofweek).bNumber.count()
@@ -161,6 +164,7 @@ def visualizeNumberOfTrips(df):
 
     return plt
 
+# visualize the trip length as boxplots
 def visualizeTripLengthBoxplots(df):
     fig, axes = plt.subplots(3, 1, figsize=(20, 15))
     fig.suptitle('Trip Length in Boxplots')
@@ -177,7 +181,7 @@ def visualizeTripLengthBoxplots(df):
 
     return sns
 
-
+# visualize the distribution of the trip lengths per month
 def visualizeDistributionOfTripsPerMonth(df):
     jan = (df.loc[(df['sTime'].dt.month==1)])["durationInSec"]
     feb = (df.loc[(df['sTime'].dt.month==2)])["durationInSec"]
@@ -287,7 +291,7 @@ def visualizeDistributionOfTripsPerMonth(df):
 
     return plt
 
-  
+ # visualize the min/max temperature and precipitation in one graphic 
 def visualizeWeatherData(df):
     # calculate aggregate statistics
     minTemperaturePerWeek = df.groupby(df.index.week).temperature.min()
