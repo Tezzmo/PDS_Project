@@ -51,6 +51,11 @@ def createFeatures(dfTripsPerDay):
     dfTripsPerDay['tripsLastDay'] = tripsLastDay
     dfTripsPerDay['tripsOneWeekAgo'] = tripsOneWeekAgo
 
+    avgTripsPerDay = dfTripsPerDay['tripsPerDay'].mean()
+
+    dfTripsPerDay['tripsLastDay'].fillna(avgTripsPerDay,inplace=True)
+    dfTripsPerDay['tripsOneWeekAgo'].fillna(avgTripsPerDay,inplace=True)
+
     #Drop Dates and Features with a low correlation
     dfTripsPerDay.dropna(inplace=True)
     dfTripsPerDay.drop(['date','date_yesterday','date_oneWeekAgo'],axis=1,inplace=True)
@@ -176,7 +181,7 @@ def retrainModel_NumberOfTrips(dfTripsPerDay, optimalHyperparameterTest):
     plt.plot(day, y_test,label="Number of trips")
     plt.plot(day,y_pred_test,label="Predicted number of trips")
     plt.title("Visualization of the Prediction")
-    plt.xlabel("Datapoint")
+    plt.xlabel("Date")
     plt.ylabel("Number of Trips")
     plt.legend(loc="upper left")
 
@@ -231,16 +236,16 @@ def predict_NumberOfTrips(dfInput, model, sscaler, sscalerY):
  
     # Save data
     path = os.path.join(utils.get_prediction_path(), "output/NumberOfTripPrediction.csv")
-    features['tripsPerDay'] = prediction
-    features.to_csv(path, index=False)
+    df['tripsPerDay'] = prediction
+    df.to_csv(path, index=False)
 
     print("Prediction is saved to csv --> output/NumberOfTripPrediction.csv")
 
     # Plot data
     # TODO Fix legend and axis
-    plt.plot(range(0,len(prediction)),prediction, label="Predicted number of trips")
+    plt.plot(dfInput['date'],prediction, label="Predicted number of trips")
     plt.title("Visualization of the Prediction")
-    plt.xlabel("Datapoints of testset")
+    plt.xlabel("Date")
     plt.ylabel("Number of Trips")
     plt.legend(loc="upper left")
 
