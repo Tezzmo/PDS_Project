@@ -189,13 +189,12 @@ def visualize(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,
         secound = 0
 
         pointInTime = datetime.datetime(year,month,day,hour,minute,secound)
-
         visualization.visualizeNumberOfBikesPerStationMap(pointInTime, dfStations, dfBikesPerStationIndex)
-        
         visualization.visualizeNumberOfBikesPerStationBarplot(pointInTime, dfStations, dfBikesPerStationIndex)
 
     elif inputType == 5:
         visualization.visualizeWeatherData(dfWeather).show()
+        visualization.visualizeNumberOfTripsWithTemperatureAndPrecipitation(dfWeather,dfTrips).show()
 
     elif inputType == 3:
         while True:
