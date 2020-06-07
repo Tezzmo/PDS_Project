@@ -61,7 +61,7 @@ def mainMenue(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay)
 
 def menueVisualization(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay):
 
-    print("What are you interested in? \n 1 - Tripduration \n 2 - Number of Trips \n 3 - Start/End point of Trips \n 4 - Bikes per Station \n 5 - Weather data \n 6 - Heat map \n 7 - Go back")
+    print("What are you interested in? \n 1 - Trip duration \n 2 - Number of Trips \n 3 - Start/End point of Trips \n 4 - Bikes per Station \n 5 - Weather data \n 6 - Heat map \n 7 - Go back")
     userInteraction = input("Choose a number <1 - 7> \n")
     userInteraction = int(userInteraction)
 
@@ -78,7 +78,7 @@ def menueVisualization(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTri
 
 def menuePrediction(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay):
 
-    print("What are you interested in? \n 1 - Tripduration \n 2 - Direction of trips \n 3 - Number of trips  \n 4 - Go back")
+    print("What are you interested in? \n 1 - Trip duration \n 2 - Direction of trips \n 3 - Number of trips  \n 4 - Go back")
     userInteraction = input("Choose a number <1 - 4> \n")
     userInteraction = int(userInteraction)
 
@@ -156,10 +156,10 @@ def visualize(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,
         visualization.visualizeMeanTripLength(dfTrips).show()
         visualization.visualizeStdTripLength(dfTrips).show()
         visualization.visualizeTripLengthBoxplots(dfTrips)
+        visualization.visualizeDistributionOfTripsPerMonth(dfTrips).show()
     
     elif inputType == 2:
         visualization.visualizeNumberOfTrips(dfTrips).show()
-        visualization.visualizeDistributionOfTripsPerMonth(dfTrips).show()
 
     elif inputType == 4:
         year = 2019
