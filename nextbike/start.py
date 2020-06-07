@@ -24,19 +24,22 @@ def main(start):
     if userInteraction == '1':
         print('Start to rebuild the model, this will take several minutes')
         dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay = rebuild()
+        mainMenue(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,True)
     elif userInteraction == '2':
         print('Input the filename in data/input/')
         fileInput = input('Exp.: data.csv \n')
         dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay = rebuild(fileInput)
+        mainMenue(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,False)
     
     elif userInteraction == '3':
         print('Start to load all data')
         dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay = useExisting()
 
+        if len(dfTrips) == 563880:
+            mainMenue(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,True)
+        else:
+            mainMenue(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,False)
     
-    mainMenue(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay)
-
-
 
 def mainMenue(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,defaultData):
 
