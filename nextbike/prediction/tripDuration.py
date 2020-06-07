@@ -190,7 +190,7 @@ def predict_DurationOfTrips(dfInput,dfWeather, model, sscaler, sscalerY):
     
     # Save data
     path = os.path.join(utils.get_prediction_path(), "output/DurationOfTripsPrediction.csv")
-    features['tripsPerDay'] = prediction
+    features['Duration of trips'] = prediction
     features.to_csv(path, index=False)
 
     # Plot data
