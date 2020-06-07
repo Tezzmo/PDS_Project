@@ -27,7 +27,7 @@ def main(start):
     elif userInteraction == '2':
         print('Input the filename in data/input/')
         fileInput = input('Exp.: data.csv \n')
-        dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay = rebuild()
+        dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay = rebuild(fileInput)
     
     elif userInteraction == '3':
         print('Start to load all data')
