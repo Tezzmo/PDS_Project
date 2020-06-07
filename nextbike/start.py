@@ -18,7 +18,7 @@ def main(start):
     warnings.filterwarnings("ignore")
 
     print("Welcome")
-    print("Your options: \n1 - Rebuild the model \n2 - Rebuild the model on new data \n3 - Use saved model")
+    print("Your options: \n1 - Use default data to create all Dataframes \n2 - Use new data to create all Dataframes \n3 - Use saved Dataframes")
     userInteraction = input("Press 1, 2 or 3 \n") 
 
     if userInteraction == '1':
