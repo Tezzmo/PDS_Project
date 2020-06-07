@@ -159,8 +159,8 @@ def predictTripDirection(df,dfWeather):
 
     # Save data
     path = os.path.join(utils.get_prediction_path(), "output/DirectionOfTripsPrediction.csv")
-    X_pred['directionOfTrips'] = y_pred
-    X_pred.to_csv(path, index=False)
+    X['directionOfTrips'] = y_pred
+    X.to_csv(path, index=False)
 
     print("Prediction is saved to csv --> output/DirectionOfTripsPrediction.csv")
 
