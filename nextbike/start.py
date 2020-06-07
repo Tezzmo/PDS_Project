@@ -150,7 +150,7 @@ def rebuild(datapath = None):
     io.save_Weather(dfWeather)
     io.save_tripData(dfTrips)
     io.save_StationData(dfStations)
-    io.save_dfBikesPerStationIndex(dfBikesPerStationIndex)
+    io.save_dfBikesPerStationIndexs(dfBikesPerStationIndex)
     io.save_tripsPerDay(dfTripsPerDay)
 
     return dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay
