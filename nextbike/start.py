@@ -14,7 +14,7 @@ from IPython.core.display import HTML
 @click.option('--start',default=False, help="Train the model.")
 
 def main(start):
-
+    warnings.filterwarnings("ignore")
     print("Welcome")
     print("Your options: \n1 - Use default data to create all Dataframes \n2 - Use new data to create all Dataframes \n3 - Use saved Dataframes")
     userInteraction = input("Press 1, 2 or 3 \n") 
@@ -278,5 +278,4 @@ def predict(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,ty
 
 
 if __name__ == '__main__':
-    warnings.filterwarnings("ignore")
     main()
