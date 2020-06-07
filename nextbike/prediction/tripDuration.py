@@ -195,5 +195,5 @@ def predict_DurationOfTrips(dfInput,dfWeather, model, sscaler, sscalerY):
 
     # Plot data
     # TODO Fix legend and axis
-    print('Prediction done and saved to csv')
+    print('Prediction done and saved to csv --> "output/DurationOfTripsPrediction.csv"')
     return dfTrips

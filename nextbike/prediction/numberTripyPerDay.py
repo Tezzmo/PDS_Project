@@ -234,6 +234,8 @@ def predict_NumberOfTrips(dfInput, model, sscaler, sscalerY):
     features['tripsPerDay'] = prediction
     features.to_csv(path, index=False)
 
+    print("Prediction is saved to csv --> output/NumberOfTripPrediction.csv")
+
     # Plot data
     # TODO Fix legend and axis
     plt.plot(range(0,len(prediction)),prediction, label="Predicted number of trips")

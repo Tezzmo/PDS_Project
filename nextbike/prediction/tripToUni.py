@@ -38,7 +38,7 @@ def createFeatures(dfTrips, dfWeather):
 
 
 def trainKNNRegression(df, dfWeather ):
-    
+    print("This can take a few minutes")
     dfTrips = createFeatures(df,dfWeather)
     
     # create new features
@@ -98,7 +98,7 @@ def trainKNNRegression(df, dfWeather ):
 
 
 def predictTripDirection(df,dfWeather):
-
+    print("This can take a few minutes")
     dfTrips = createFeatures(df,dfWeather)
     X_pred = dfTrips.copy()
 
@@ -156,6 +156,13 @@ def predictTripDirection(df,dfWeather):
     X_scaled = st_scaler.transform(X)
     X_scaled = pca.transform(X_scaled)
     y_pred = knn.predict(X_scaled)
+
+    # Save data
+    path = os.path.join(utils.get_prediction_path(), "output/DirectionOfTripsPrediction.csv")
+    X_pred['directionOfTrips'] = y_pred
+    X_pred.to_csv(path, index=False)
+
+    print("Prediction is saved to csv --> output/DirectionOfTripsPrediction.csv")
 
     return y_pred
 
