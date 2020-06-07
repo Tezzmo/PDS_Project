@@ -1,7 +1,6 @@
 import click
 import datetime
 from . import io
-from . import model
 from . import operation
 from . import postalCodes
 from . import visualization
@@ -59,7 +58,7 @@ def mainMenue(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,
             mainMenue(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,defaultData)
 
     else:
-        print("Your options: \n1 Predict \n2 - End")
+        print("Your options: \n1 - Predict \n2 - End")
         userInteraction = input("Press 1 or 2 \n")
 
         if userInteraction == '1':
