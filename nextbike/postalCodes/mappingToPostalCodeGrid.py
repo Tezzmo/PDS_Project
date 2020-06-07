@@ -52,7 +52,6 @@ def assignPostalCodeAlternative(dfTrips):
     dfWithPostalCode['ePostalCode'] = postalCodesEnd
 
     return dfWithPostalCode
-'''
 
 
 def check(row,point,js):
@@ -64,7 +63,7 @@ def check(row,point,js):
                 return feature['properties']['plz']
 
     return None
-
+'''
 
 
 def filterForPostalCodes(dfTrips):

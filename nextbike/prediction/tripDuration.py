@@ -55,8 +55,7 @@ def createFeatures(dfTrips, dfWeather):
 def retrainModel_DurationOfTrips(dfTrips,dfWeather, optimalHyperparameterTest):
     
     dfTrips = createFeatures(dfTrips,dfWeather)
-    print(dfTrips.info())
-    print(dfTrips.head(2))
+
     # Create train test split
     Y = dfTrips['durationInSec']
     X = dfTrips.drop('durationInSec',axis=1).values
