@@ -33,6 +33,8 @@ def createFeatures(dfTrips, dfWeather):
     dfTrips['sHour'] = dfTrips['sTime'].dt.hour
     dfTrips['sMinute'] = dfTrips['sTime'].dt.minute
 
+    dfTrips['isTerm'] = dfTrips.apply(isTerm, axis=1)
+
 
     dfTrips.drop(axis=1,labels=['eTime', 'eLong', 'eLat', 'ePlaceNumber'],errors='ignore',inplace=True)
     # Create autoCorr feature
@@ -44,8 +46,11 @@ def createFeatures(dfTrips, dfWeather):
     dfTrips['autoCorr'].fillna(allMean,inplace=True)
     dfTrips.dropna(inplace=True)
 
-    dfTrips.drop(inplace=True, columns=['bNumber','sTime','sLong','sLat',
-    'precipitation','sMonth','sDay','bType','sPostalCode','ePostalCode','duration'], errors='ignore')
+    # Create dummies
+    dfTrips = pd.concat([dfTrips, pd.get_dummies(dfTrips['sPlaceNumber'],drop_first=True,dtype='int')],axis=1)
+
+    dfTrips.drop(inplace=True, columns=['bNumber','sTime','sLong','sLat','sMonth','weekend',
+    'bType','sPostalCode','ePostalCode','duration','sPlaceNumber','precipitation'], errors='ignore')
     
 
     return dfTrips
@@ -59,7 +64,7 @@ def retrainModel_DurationOfTrips(dfTrips,dfWeather, optimalHyperparameterTest):
     # Create train test split
     Y = dfTrips['durationInSec']
     X = dfTrips.drop('durationInSec',axis=1).values
-    x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=0.3, random_state=20)
+    x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=0.3)
 
     # Scale the data
     sscaler = StandardScaler()
@@ -69,6 +74,7 @@ def retrainModel_DurationOfTrips(dfTrips,dfWeather, optimalHyperparameterTest):
     sscalerY = StandardScaler()
     y_train = sscalerY.fit_transform(y_train.values.reshape(-1, 1))
     y_test = sscalerY.transform(y_test.values.reshape(-1, 1))
+
 
     ###Find the optimal Hyperparameter by testing multiple (150) combinations using RandomizedSearchCV
     if optimalHyperparameterTest == True:
@@ -114,7 +120,7 @@ def retrainModel_DurationOfTrips(dfTrips,dfWeather, optimalHyperparameterTest):
 
     else:
         #Else use default
-        reg = RandomForestRegressor(n_jobs=-1,n_estimators=1000)
+        reg = RandomForestRegressor(n_jobs=-1,n_estimators=100, criterion='mse')
 
 
     #Train the model
@@ -141,8 +147,12 @@ def retrainModel_DurationOfTrips(dfTrips,dfWeather, optimalHyperparameterTest):
     print("Test  :  ","MAE: ",errTest,"MSE: ",err_mseTest,"R^2: ",err_r2Test)
     print("Train :  ","MAE: ",errTrain,"MSE: ",err_mseTrain,"R^2: ",err_r2Train)
 
-
-    # Visualize TODO
+    
+    # Visualize 
+    #plt.plot(range(len(y_test)),y_test,'rx')
+    #plt.plot(range(len(y_pred_test)),y_pred_test,'bo')
+    
+    #plt.show()
 
     #Save the model
     path = os.path.join(utils.get_ml_path(), "DurationOfTrips/randomForestRegressor_DurationOfTrips.pkl")
@@ -175,10 +185,14 @@ def loadModel_DurationOfTrips():
 def predict_DurationOfTrips(dfInput,dfWeather, model, sscaler, sscalerY):
     dfTrips = dfInput.copy()
 
-    
-    
+    path = os.path.join(utils.get_ml_path(), "DurationOfTrips/randomForestRegressor_DurationOfTrips.pkl")
+    rfr = load(path , mmap_mode ='r')
+    model = rfr
+
     #Create inputs dataframe and scale it
     features = createFeatures(dfTrips,dfWeather)
+    
+    true_y = features['durationInSec']
     features.drop('durationInSec',inplace=True,axis=1,errors='ignore')
     featureValues = features.values
     xScaled = sscaler.transform(featureValues)
@@ -192,8 +206,29 @@ def predict_DurationOfTrips(dfInput,dfWeather, model, sscaler, sscalerY):
     path = os.path.join(utils.get_prediction_path(), "output/DurationOfTripsPrediction.csv")
     features['durationOfTrips'] = prediction
     features.to_csv(path, index=False)
+    
+    #
+    errTest = mean_absolute_error(true_y, prediction)
+    #r2test = r2_score(true_y, prediction)
+    print('MAE: ', errTest)
+    #print('R2: ', r2test)
+    #plt.plot(range(len(true_y)),true_y,'rx')
+    #plt.plot(range(len(prediction)),prediction,'bo')
+    
+    #plt.show()
 
-    # Plot data
-    # TODO Fix legend and axis
+
     print('Prediction done and saved to csv --> "output/DurationOfTripsPrediction.csv"')
     return dfTrips
+
+def isTerm(row):
+    value = -1
+    if datetime.datetime(2019, 1, 7) <= row['sTime'] <= datetime.datetime(2019, 2, 15):
+        value = 1
+    elif datetime.datetime(2019, 4, 15) <= row['sTime'] <= datetime.datetime(2019, 7, 19):
+        value = 1
+    elif datetime.datetime(2019, 10, 14) <= row['sTime'] <= datetime.datetime(2019, 12, 20):
+        value = 1
+    else:
+        value = 0
+    return value
