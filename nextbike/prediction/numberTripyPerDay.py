@@ -71,10 +71,6 @@ def createFeatures(dfTripsPerDay):
 
 def retrainModel_NumberOfTrips(dfTripsPerDay, optimalHyperparameterTest):
 
-    #Mean values for compare
-    meanOfAllValues = 992
-    meanOfPrevoiusMonth = 1025
-
     ###First filter for outliers
     #Get standart deviation of trips per day
     std = dfTripsPerDay['tripsPerDay'].std()
@@ -179,19 +175,6 @@ def retrainModel_NumberOfTrips(dfTripsPerDay, optimalHyperparameterTest):
     print("Test  :  ","MAE: ",errTest,"MSE: ",err_mseTest,"R^2: ",err_r2Test)
     print("Train :  ","MAE: ",errTrain,"MSE: ",err_mseTrain,"R^2: ",err_r2Train)
 
-    #Compare with mean methods
-    allPreviousAvg = [meanOfAllValues] * len(y_test)
-    errAllPreviousAvg = mean_absolute_error(y_test, allPreviousAvg)
-    err_mseAllPreviousAvg = mean_squared_error(y_test, allPreviousAvg)
-
-    previousMonthAvg = [meanOfPrevoiusMonth] * len(y_test)
-    errPreviousMonthAvg = mean_absolute_error(y_test, previousMonthAvg)
-    err_msePreviousMonthAvg = mean_squared_error(y_test, previousMonthAvg)
-
-    print("Compare to prediction by average:  ","MAE: ",errAllPreviousAvg," MSE: ", err_mseAllPreviousAvg)
-    print("Compare to Avg:  ","MAE: ",errPreviousMonthAvg," MSE: ", err_msePreviousMonthAvg)
-
-
 
     #Visualize the Prediction
     day = []
@@ -244,8 +227,8 @@ def loadModel_NumberOfTrips():
 def predict_NumberOfTrips(dfInput, model, sscaler, sscalerY):
 
     #Mean values for compare
-    meanOfAllValues = 992
-    meanOfPrevoiusMonth = 1025
+    meanOfAllValues = 1672
+    meanOfPrevoiusMonth = 2921
 
     #Create inputs dataframe and scale it
     df = dfInput.copy()
@@ -282,8 +265,8 @@ def predict_NumberOfTrips(dfInput, model, sscaler, sscalerY):
     errPreviousMonthAvg = mean_absolute_error(goal, previousMonthAvg)
     err_msePreviousMonthAvg = mean_squared_error(goal, previousMonthAvg)
 
-    print("Compare to prediction by average:  ","MAE: ",errAllPreviousAvg," MSE: ", err_mseAllPreviousAvg)
-    print("Compare to Avg:  ","MAE: ",errPreviousMonthAvg," MSE: ", err_msePreviousMonthAvg)
+    print("Compare to prediction by average (last 6 months):  ","MAE: ",errAllPreviousAvg," MSE: ", err_mseAllPreviousAvg)
+    print("Compare to prediction by average (last month):  ","MAE: ",errPreviousMonthAvg," MSE: ", err_msePreviousMonthAvg)
 
 
     # Plot data
