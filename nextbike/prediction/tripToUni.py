@@ -74,27 +74,40 @@ def trainKNNRegression(df, dfWeather ):
     st_scaler.fit(X_train)
     X_train_scaled = st_scaler.transform(X_train)
     X_test_scaled = st_scaler.transform(X_test)
-    pathScaler = os.path.join(utils.get_ml_path(), "tripsToUni/scaler.pkl")
-    dump(st_scaler,pathScaler)
 
     #make an instance of the Model which explains 99% of Variance
     pca = PCA(0.99)
     pca.fit(X_train_scaled)
     X_train_scaled = pca.transform(X_train_scaled)
     X_test_scaled = pca.transform(X_test_scaled)
-    pathPCA = os.path.join(utils.get_ml_path(), "tripsToUni/pca.pkl")
-    dump(pca,pathPCA)
 
     knn = KNeighborsRegressor()
     knn.fit(X_train_scaled, y_train)
     y_pred = knn.predict(X_test_scaled)
-    pathKNN = os.path.join(utils.get_ml_path(), "tripsToUni/knn.pkl")
-    dump(knn,pathKNN)
     
     # round predicted values and return classification_report
     y_pred_rounded = np.round(y_pred, 0)
 
     print(classification_report(y_true=y_test, y_pred=y_pred_rounded))
+
+    # train model on whole data set
+    st_scaler = StandardScaler()
+    st_scaler.fit(X)
+    X_scaled = st_scaler.transform(X)
+    pathScaler = os.path.join(utils.get_ml_path(), "tripsToUni/scaler.pkl")
+    dump(st_scaler,pathScaler)
+
+    #make an instance of the Model which explains 99% of Variance
+    pca = PCA(0.99)
+    pca.fit(X_scaled)
+    X_scaled = pca.transform(X_scaled)
+    pathPCA = os.path.join(utils.get_ml_path(), "tripsToUni/pca.pkl")
+    dump(pca,pathPCA)
+
+    knn = KNeighborsRegressor()
+    knn.fit(X_scaled, y)
+    pathKNN = os.path.join(utils.get_ml_path(), "tripsToUni/knn.pkl")
+    dump(knn,pathKNN)
 
 
 def predictTripDirection(df,dfWeather):
