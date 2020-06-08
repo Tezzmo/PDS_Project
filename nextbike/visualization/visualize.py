@@ -87,9 +87,9 @@ def visualizeNumberOfBikesPerStationBarplot(pointInTime, dfStations, dfStationBi
 # visualize the mean trip length per month, day and hour
 def visualizeMeanTripLength(df):
     # Calculate mean trip length per month, day, hour
-    meanTripLengthPerMonth = df.groupby(df.sTime.dt.month).durationInSec.mean(numeric_only=False)
-    meanTripLengthPerDayOfWeek = df.groupby(df.sTime.dt.dayofweek).durationInSec.mean(numeric_only=False)
-    meanTripLengthPerHour = df.groupby(df.sTime.dt.hour).durationInSec.mean(numeric_only=False)
+    meanTripLengthPerMonth = df.groupby(df.sTime.dt.month).durationInSec.median(numeric_only=False)
+    meanTripLengthPerDayOfWeek = df.groupby(df.sTime.dt.dayofweek).durationInSec.median(numeric_only=False)
+    meanTripLengthPerHour = df.groupby(df.sTime.dt.hour).durationInSec.median(numeric_only=False)
     # plot figures
     plt.rcParams["figure.figsize"][0] = 30
     plt.rcParams["figure.figsize"][1] = 15
@@ -178,7 +178,7 @@ def visualizeTripLengthBoxplots(df):
     sns.boxplot(y='durationInSec', x='day', data=df, palette="colorblind", showfliers=False, ax=axes[1])
     # Boxplots per Day
     sns.boxplot(y='durationInSec', x='hour', data=df, palette="colorblind", showfliers=False, ax=axes[2])
-
+    plt.show()
     return sns
 
 # visualize the distribution of the trip lengths per month
