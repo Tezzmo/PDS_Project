@@ -57,9 +57,11 @@ def createFeatures(dfTripsPerDay):
     dfTripsPerDay['tripsOneWeekAgo'].fillna(avgTripsPerDay,inplace=True)
 
     #Drop Dates and Features with a low correlation
+    dfTripsPerDay['isTerm'] = dfTripsPerDay.apply(isTerm, axis=1)
     dfTripsPerDay.dropna(inplace=True)
     dfTripsPerDay.drop(['date','date_yesterday','date_oneWeekAgo'],axis=1,inplace=True)
     dfTripsPerDay.drop(['day','month'],axis=1,inplace=True)
+    dfTripsPerDay.drop(['temperatureMIN','temperatureMAX'],axis=1,inplace=True)
 
     return dfTripsPerDay
 
@@ -68,6 +70,10 @@ def createFeatures(dfTripsPerDay):
 
 
 def retrainModel_NumberOfTrips(dfTripsPerDay, optimalHyperparameterTest):
+
+    #Mean values for compare
+    meanOfAllValues = 992
+    meanOfPrevoiusMonth = 1025
 
     ###First filter for outliers
     #Get standart deviation of trips per day
@@ -173,6 +179,20 @@ def retrainModel_NumberOfTrips(dfTripsPerDay, optimalHyperparameterTest):
     print("Test  :  ","MAE: ",errTest,"MSE: ",err_mseTest,"R^2: ",err_r2Test)
     print("Train :  ","MAE: ",errTrain,"MSE: ",err_mseTrain,"R^2: ",err_r2Train)
 
+    #Compare with mean methods
+    allPreviousAvg = [meanOfAllValues] * len(y_test)
+    errAllPreviousAvg = mean_absolute_error(y_test, allPreviousAvg)
+    err_mseAllPreviousAvg = mean_squared_error(y_test, allPreviousAvg)
+
+    previousMonthAvg = [meanOfPrevoiusMonth] * len(y_test)
+    errPreviousMonthAvg = mean_absolute_error(y_test, previousMonthAvg)
+    err_msePreviousMonthAvg = mean_squared_error(y_test, previousMonthAvg)
+
+    print("Compare to prediction by average:  ","MAE: ",errAllPreviousAvg," MSE: ", err_mseAllPreviousAvg)
+    print("Compare to Avg:  ","MAE: ",errPreviousMonthAvg," MSE: ", err_msePreviousMonthAvg)
+
+
+
     #Visualize the Prediction
     day = []
     for i in range(len(y_test)):
@@ -223,9 +243,14 @@ def loadModel_NumberOfTrips():
 
 def predict_NumberOfTrips(dfInput, model, sscaler, sscalerY):
 
+    #Mean values for compare
+    meanOfAllValues = 992
+    meanOfPrevoiusMonth = 1025
+
     #Create inputs dataframe and scale it
     df = dfInput.copy()
     features = createFeatures(df)
+    goal = features['tripsPerDay']
     features.drop('tripsPerDay',inplace=True,axis=1,errors='ignore')
     featureValues = features.values
     xScaled = sscaler.transform(featureValues)
@@ -241,9 +266,30 @@ def predict_NumberOfTrips(dfInput, model, sscaler, sscalerY):
 
     print("Prediction is saved to csv --> output/NumberOfTripPrediction.csv")
 
+    errTest = mean_absolute_error(goal, prediction)
+    err_mseTest = mean_squared_error(goal, prediction)
+    err_r2Test = r2_score(goal, prediction)
+
+    print("Test  :  ","MAE: ",errTest,"MSE: ",err_mseTest,"R^2: ",err_r2Test)
+
+
+    #Compare with mean methods
+    allPreviousAvg = [meanOfAllValues] * len(goal)
+    errAllPreviousAvg = mean_absolute_error(goal, allPreviousAvg)
+    err_mseAllPreviousAvg = mean_squared_error(goal, allPreviousAvg)
+
+    previousMonthAvg = [meanOfPrevoiusMonth] * len(goal)
+    errPreviousMonthAvg = mean_absolute_error(goal, previousMonthAvg)
+    err_msePreviousMonthAvg = mean_squared_error(goal, previousMonthAvg)
+
+    print("Compare to prediction by average:  ","MAE: ",errAllPreviousAvg," MSE: ", err_mseAllPreviousAvg)
+    print("Compare to Avg:  ","MAE: ",errPreviousMonthAvg," MSE: ", err_msePreviousMonthAvg)
+
+
     # Plot data
     # TODO Fix legend and axis
     plt.plot(dfInput['date'],prediction, label="Predicted number of trips")
+    plt.plot(dfInput['date'],goal, label="Number of trips")
     plt.title("Visualization of the Prediction")
     plt.xlabel("Date")
     plt.ylabel("Number of Trips")
@@ -253,3 +299,16 @@ def predict_NumberOfTrips(dfInput, model, sscaler, sscalerY):
     plt.show()
 
     return df
+
+
+def isTerm(row):
+    value = -1
+    if datetime.datetime(2019, 1, 7) <= row['date'] <= datetime.datetime(2019, 2, 15):
+        value = 1
+    elif datetime.datetime(2019, 4, 15) <= row['date'] <= datetime.datetime(2019, 7, 19):
+        value = 1
+    elif datetime.datetime(2019, 10, 14) <= row['date'] <= datetime.datetime(2019, 12, 20):
+        value = 1
+    else:
+        value = 0
+    return value

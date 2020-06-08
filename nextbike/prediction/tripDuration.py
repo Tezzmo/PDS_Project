@@ -191,8 +191,9 @@ def predict_DurationOfTrips(dfInput,dfWeather, model, sscaler, sscalerY):
 
     #Create inputs dataframe and scale it
     features = createFeatures(dfTrips,dfWeather)
-    
+
     true_y = features['durationInSec']
+
     features.drop('durationInSec',inplace=True,axis=1,errors='ignore')
     featureValues = features.values
     xScaled = sscaler.transform(featureValues)
@@ -219,7 +220,11 @@ def predict_DurationOfTrips(dfInput,dfWeather, model, sscaler, sscalerY):
 
 
     print('Prediction done and saved to csv --> "output/DurationOfTripsPrediction.csv"')
+
+
+
     return dfTrips
+
 
 def isTerm(row):
     value = -1
@@ -232,3 +237,4 @@ def isTerm(row):
     else:
         value = 0
     return value
+
