@@ -254,6 +254,9 @@ def createTrips(df):
     dfTrip = pd.DataFrame(tripList, columns=['bNumber', 'sTime', 'eTime', 'duration', 'sLong', 'sLat', 'eLong', 'eLat',
                                              'weekend', 'bType', 'sPlaceNumber', 'ePlaceNumber'])
 
+    # add column with durationInSec
+    dfTrip["durationInSec"] = dfTrip["duration"].dt.total_seconds().astype(int)
+
     return dfTrip
 
 
@@ -329,9 +332,6 @@ def read_model():
 
 # drop outliers
 def drop_outliers(df):
-
-    # add column with durationInSec
-    df["durationInSec"] = df["duration"].dt.total_seconds().astype(int)
 
     # calculate mean and standard deviation for each day and month
     meanTripLengthPerDay = (df.groupby(df.sTime.dt.date).durationInSec.mean(numeric_only=False)).to_dict()

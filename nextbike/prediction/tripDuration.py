@@ -179,6 +179,7 @@ def predict_DurationOfTrips(dfInput,dfWeather, model, sscaler, sscalerY):
     
     #Create inputs dataframe and scale it
     features = createFeatures(dfTrips,dfWeather)
+    goal = features['durationInSec']
     features.drop('durationInSec',inplace=True,axis=1,errors='ignore')
     featureValues = features.values
     xScaled = sscaler.transform(featureValues)
@@ -196,4 +197,11 @@ def predict_DurationOfTrips(dfInput,dfWeather, model, sscaler, sscalerY):
     # Plot data
     # TODO Fix legend and axis
     print('Prediction done and saved to csv --> "output/DurationOfTripsPrediction.csv"')
+
+    errTest = mean_absolute_error(goal, prediction)
+    err_mseTest = mean_squared_error(goal, prediction)
+    err_r2Test = r2_score(goal, prediction)
+
+    print("Test  :  ","MAE: ",errTest,"MSE: ",err_mseTest,"R^2: ",err_r2Test)
+
     return dfTrips

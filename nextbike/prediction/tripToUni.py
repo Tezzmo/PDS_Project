@@ -134,24 +134,25 @@ def predictTripDirection(df,dfWeather):
     X = pd.concat([X, sPlace], axis=1)
     X.dropna(inplace=True)
 
+    knn = None
     try:
         pathScaler = os.path.join(utils.get_ml_path(), "tripsToUni/scaler.pkl")
         st_scaler = load(pathScaler)
 
     except FileNotFoundError:
-        return "Standard Scaler not found. Please train a model first."
+        print("Standard Scaler not found. Please train a model first.")
 
     try:
         pathPCA = os.path.join(utils.get_ml_path(), "tripsToUni/PCA.pkl")
         pca = load(pathPCA)
     except FileNotFoundError:
-        return "Principal Component Analysis not found. Please train a model first."
+        print("Principal Component Analysis not found. Please train a model first.")
 
-    try:
-        pathKNN = os.path.join(utils.get_ml_path(), "tripsToUni/KNN.pkl")
-        knn = load(pathKNN)
-    except FileNotFoundError:
-        return "K-Nearest Neighbor not found. Please train a model first."
+    #try:
+    pathKNN = os.path.join(utils.get_ml_path(), "tripsToUni/knn.pkl")
+    knn = load(pathKNN)
+    #except FileNotFoundError:
+    #    print("K-Nearest Neighbor not found. Please train a model first.")
     
     X_scaled = st_scaler.transform(X)
     X_scaled = pca.transform(X_scaled)
@@ -163,6 +164,10 @@ def predictTripDirection(df,dfWeather):
     X.to_csv(path, index=False)
 
     print("Prediction is saved to csv --> output/DirectionOfTripsPrediction.csv")
+
+    y_pred_rounded = np.round(y_pred, 0)
+    print(classification_report(y_true=X_pred['tripToUniversity'], y_pred=y_pred_rounded))
+
 
     return y_pred
 

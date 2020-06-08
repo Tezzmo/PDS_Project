@@ -226,6 +226,7 @@ def predict_NumberOfTrips(dfInput, model, sscaler, sscalerY):
     #Create inputs dataframe and scale it
     df = dfInput.copy()
     features = createFeatures(df)
+    goal = features['tripsPerDay']
     features.drop('tripsPerDay',inplace=True,axis=1,errors='ignore')
     featureValues = features.values
     xScaled = sscaler.transform(featureValues)
@@ -241,9 +242,18 @@ def predict_NumberOfTrips(dfInput, model, sscaler, sscalerY):
 
     print("Prediction is saved to csv --> output/NumberOfTripPrediction.csv")
 
+    errTest = mean_absolute_error(goal, prediction)
+    err_mseTest = mean_squared_error(goal, prediction)
+    err_r2Test = r2_score(goal, prediction)
+
+    print("Test  :  ","MAE: ",errTest,"MSE: ",err_mseTest,"R^2: ",err_r2Test)
+
+
+
     # Plot data
     # TODO Fix legend and axis
     plt.plot(dfInput['date'],prediction, label="Predicted number of trips")
+    plt.plot(dfInput['date'],goal, label="Number of trips")
     plt.title("Visualization of the Prediction")
     plt.xlabel("Date")
     plt.ylabel("Number of Trips")
