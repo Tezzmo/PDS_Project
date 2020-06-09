@@ -9,13 +9,43 @@ from IPython.display import display, Image
 from IPython.core.display import HTML
 
 @click.command()
-@click.option('--start',default=False, help="Train the model.")
+@click.option('--train',default=None, help="Input a filename. Train the model on this data.")
+@click.option('--transform',default=None,help='Input a filename. Transform this data into Trips')
+@click.option('--predict', default=None,help='Input a filename. Predict on the dataset. Before prediction you need to train on a dataset.')
+
 
 #Entering point
-def main(start):
+def main(train,transform,predict):
+    print(train,transform,predict)
+
+    if transform != None:
+        if (train != None) & (transform != None) & (predict != None):
+            dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay = rebuild(train)
+        else:
+            dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay = rebuild(transform)
+
+    if train != None:
+        if transform == None:
+            dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay = useExisting()
+        print('This can take a few minutes')
+        prediction.retrainModel_DurationOfTrips(dfTrips,dfWeather,False)
+
+    if predict != None:
+        if (train != None) & (transform != None) & (predict != None):
+            print('This can take a few minutes')
+            dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay = rebuild(transform)
+
+        print('This can take a few minutes')
+        model, sscaler, sscalerY = prediction.loadModel_DurationOfTrips()
+        prediction.predict_DurationOfTrips(dfTrips, dfWeather, model, sscaler,sscalerY)
+    
     #Don't show warnings in the console
-    warnings.filterwarnings("ignore")
-    dataLoadMenue()
+    if (train == None) & (transform == None) & (predict == None):
+        warnings.filterwarnings("ignore")
+        dataLoadMenue()
+    else:
+        print('Program finished')
+
 
 
 #Give user the possiblity to chose input data
@@ -89,7 +119,7 @@ def mainMenue(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,
             menuePrediction(dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay,defaultData)
 
         elif userInteraction == '2':
-            dataLoadMenue
+            dataLoadMenue()
 
         elif userInteraction == '3':
             pass

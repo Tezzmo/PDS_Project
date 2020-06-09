@@ -1,3 +1,7 @@
+import warnings
+from sklearn.exceptions import DataConversionWarning
+warnings.simplefilter(action='ignore', category=FutureWarning)
+warnings.simplefilter(action='ignore', category=DataConversionWarning)
 import datetime
 import numpy as np
 import pandas as pd
@@ -11,7 +15,9 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.externals.joblib import dump, load
 from . import utils
+from .. import io
 import os
+
 
 def createFeatures(dfTrips, dfWeather):
 
@@ -49,6 +55,10 @@ def createFeatures(dfTrips, dfWeather):
     # Create dummies
     dfTrips = pd.concat([dfTrips, pd.get_dummies(dfTrips['sPlaceNumber'],drop_first=True,dtype='int')],axis=1)
 
+    #print('MAE 1-6 Month: ', dfTrips.loc[dfTrips['sMonth']<7]['durationInSec'].mean())
+    #print('MAE 6 Month: ', dfTrips.loc[dfTrips['sMonth']==6]['durationInSec'].mean())
+    
+
     dfTrips.drop(inplace=True, columns=['bNumber','sTime','sLong','sLat','sMonth','weekend',
     'bType','sPostalCode','ePostalCode','duration','sPlaceNumber','precipitation'], errors='ignore')
     
@@ -58,7 +68,7 @@ def createFeatures(dfTrips, dfWeather):
 
 
 def retrainModel_DurationOfTrips(dfTrips,dfWeather, optimalHyperparameterTest):
-    
+
     dfTrips = createFeatures(dfTrips,dfWeather)
 
     # Create train test split
@@ -166,7 +176,6 @@ def retrainModel_DurationOfTrips(dfTrips,dfWeather, optimalHyperparameterTest):
     dump(sscalerY,pathScalerY)
 
 
-
 def loadModel_DurationOfTrips():
     # Load regression
     path = os.path.join(utils.get_ml_path(), "DurationOfTrips/randomForestRegressor_DurationOfTrips.pkl")
@@ -184,10 +193,6 @@ def loadModel_DurationOfTrips():
 
 def predict_DurationOfTrips(dfInput,dfWeather, model, sscaler, sscalerY):
     dfTrips = dfInput.copy()
-
-    path = os.path.join(utils.get_ml_path(), "DurationOfTrips/randomForestRegressor_DurationOfTrips.pkl")
-    rfr = load(path , mmap_mode ='r')
-    model = rfr
 
     #Create inputs dataframe and scale it
     features = createFeatures(dfTrips,dfWeather)
