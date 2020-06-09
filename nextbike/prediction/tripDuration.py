@@ -68,6 +68,10 @@ def createFeatures(dfTrips, dfWeather):
 
 
 def retrainModel_DurationOfTrips(dfTrips,dfWeather, optimalHyperparameterTest):
+    
+    #Mean values for compare
+    meanOfAllValues = 992
+    meanOfPrevoiusMonth = 1025
 
     dfTrips = createFeatures(dfTrips,dfWeather)
 
@@ -157,6 +161,19 @@ def retrainModel_DurationOfTrips(dfTrips,dfWeather, optimalHyperparameterTest):
     print("Test  :  ","MAE: ",errTest,"MSE: ",err_mseTest,"R^2: ",err_r2Test)
     print("Train :  ","MAE: ",errTrain,"MSE: ",err_mseTrain,"R^2: ",err_r2Train)
 
+
+    #Compare with mean methods
+    allPreviousAvg = [meanOfAllValues] * len(y_train)
+    errAllPreviousAvg = mean_absolute_error(y_train, allPreviousAvg)
+    err_mseAllPreviousAvg = mean_squared_error(y_train, allPreviousAvg)
+
+    previousMonthAvg = [meanOfPrevoiusMonth] * len(y_train)
+    errPreviousMonthAvg = mean_absolute_error(y_train, previousMonthAvg)
+    err_msePreviousMonthAvg = mean_squared_error(y_train, previousMonthAvg)
+
+    print("Compare to prediction by average (last 6 months):  ","MAE: ",errAllPreviousAvg," MSE: ", err_mseAllPreviousAvg)
+    print("Compare to prediction by average (last month):  ","MAE: ",errPreviousMonthAvg," MSE: ", err_msePreviousMonthAvg)
+
     
     # Visualize 
     #plt.plot(range(len(y_test)),y_test,'rx')
@@ -192,12 +209,18 @@ def loadModel_DurationOfTrips():
 
 
 def predict_DurationOfTrips(dfInput,dfWeather, model, sscaler, sscalerY):
+
+    #Mean values for compare
+    meanOfAllValues = 992
+    meanOfPrevoiusMonth = 1025
+
     dfTrips = dfInput.copy()
 
     #Create inputs dataframe and scale it
     features = createFeatures(dfTrips,dfWeather)
-    
+
     true_y = features['durationInSec']
+
     features.drop('durationInSec',inplace=True,axis=1,errors='ignore')
     featureValues = features.values
     xScaled = sscaler.transform(featureValues)
@@ -223,8 +246,24 @@ def predict_DurationOfTrips(dfInput,dfWeather, model, sscaler, sscalerY):
     #plt.show()
 
 
+    #Compare with mean methods
+    allPreviousAvg = [meanOfAllValues] * len(true_y)
+    errAllPreviousAvg = mean_absolute_error(true_y, allPreviousAvg)
+    err_mseAllPreviousAvg = mean_squared_error(true_y, allPreviousAvg)
+
+    previousMonthAvg = [meanOfPrevoiusMonth] * len(true_y)
+    errPreviousMonthAvg = mean_absolute_error(true_y, previousMonthAvg)
+    err_msePreviousMonthAvg = mean_squared_error(true_y, previousMonthAvg)
+
+    print("Compare to prediction by average (last 6 months):  ","MAE: ",errAllPreviousAvg," MSE: ", err_mseAllPreviousAvg)
+    print("Compare to prediction by average (last month):  ","MAE: ",errPreviousMonthAvg," MSE: ", err_msePreviousMonthAvg)
+
+
     print('Prediction done and saved to csv --> "output/DurationOfTripsPrediction.csv"')
+
+    
     return dfTrips
+
 
 def isTerm(row):
     value = -1
@@ -237,3 +276,4 @@ def isTerm(row):
     else:
         value = 0
     return value
+
