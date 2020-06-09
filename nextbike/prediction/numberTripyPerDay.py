@@ -25,6 +25,7 @@ def createFeatures(dfTripsPerDay):
     tripsLastDay = []
     tripsOneWeekAgo = []
 
+    #Save unique dates
     lastDay = list(dfTripsPerDay['date_yesterday'].unique())
     oneWeekEarlier = list(dfTripsPerDay['date_oneWeekAgo'].unique())
 
@@ -51,8 +52,10 @@ def createFeatures(dfTripsPerDay):
     dfTripsPerDay['tripsLastDay'] = tripsLastDay
     dfTripsPerDay['tripsOneWeekAgo'] = tripsOneWeekAgo
 
+    #Get the mean for fill of nans
     avgTripsPerDay = dfTripsPerDay['tripsPerDay'].mean()
 
+    #Fill nans with mean
     dfTripsPerDay['tripsLastDay'].fillna(avgTripsPerDay,inplace=True)
     dfTripsPerDay['tripsOneWeekAgo'].fillna(avgTripsPerDay,inplace=True)
 
@@ -66,9 +69,7 @@ def createFeatures(dfTripsPerDay):
     return dfTripsPerDay
 
 
-
-
-
+# Trains a model to predict the number of trips on the next day
 def retrainModel_NumberOfTrips(dfTripsPerDay, optimalHyperparameterTest):
 
     ###First filter for outliers
@@ -98,29 +99,25 @@ def retrainModel_NumberOfTrips(dfTripsPerDay, optimalHyperparameterTest):
     X = dfTripsPerDayFilterd.drop('tripsPerDay',axis=1).values
     x_train, x_test, y_train, y_test = train_test_split(X, Y, test_size=0.3, random_state=20)
 
-    #Scale the Data
+    #Scale the inputdata
     sscaler = StandardScaler()
     x_train = sscaler.fit_transform(x_train)
     x_test = sscaler.transform(x_test)
 
+    #Sacle the output data
     sscalerY = StandardScaler()
     y_train = sscalerY.fit_transform(y_train.values.reshape(-1, 1))
     y_test = sscalerY.transform(y_test.values.reshape(-1, 1))
-    ###Find the optimal Hyperparameter by testing multiple (150) combinations using RandomizedSearchCV
+    #Find the optimal Hyperparameter by testing multiple combinations using RandomizedSearchCV
     if optimalHyperparameterTest == True:
-        # Number of trees in random forest
+        
         n_estimators = [int(x) for x in np.linspace(start = 100, stop = 1500, num = 10)]
-        # Number of features to consider at every split
         max_features = ['auto', 'sqrt']
-        # Maximum number of levels in tree
         max_depth = [int(x) for x in np.linspace(10, 110, num = 11)]
         max_depth.append(None)
-        # Minimum number of samples required to split a node
         min_samples_split = [2, 5, 10]
-        # Minimum number of samples required at each leaf node
         min_samples_leaf = [1, 2, 4]
-        # Method of selecting samples for training each tree
-        bootstrap = [True, False]# Create the random grid
+        bootstrap = [True, False]
         random_grid = {'n_estimators': n_estimators,
                 'max_features': max_features,
                 'max_depth': max_depth,
@@ -129,15 +126,11 @@ def retrainModel_NumberOfTrips(dfTripsPerDay, optimalHyperparameterTest):
                 'bootstrap': bootstrap}
 
 
-        # Use the random grid to search for best hyperparameters
-        # First create the base model to tune
         rf = RandomForestRegressor()
-        # Random search of parameters, using 3 fold cross validation, 
-        # search across 150 different combinations, and use all available cores
         rf_random = RandomizedSearchCV(estimator = rf, param_distributions = random_grid, n_iter = 150, cv = 3, verbose=2, random_state=45, n_jobs = -1)
-        # Fit the random search model
         rf_random.fit(x_train,y_train)
 
+        #Take the best values
         reg = RandomForestRegressor(n_jobs=-1,
                             n_estimators = rf_random.best_params_['n_estimators'],
                             min_samples_split = rf_random.best_params_['min_samples_split'],
@@ -154,24 +147,27 @@ def retrainModel_NumberOfTrips(dfTripsPerDay, optimalHyperparameterTest):
     #Train the model
     reg.fit(x_train,y_train)
 
-    #Evaluate the model based on the train test split
+    #Predict the test data and rescale them
     y_pred_test = reg.predict(x_test)
     y_pred_test = sscalerY.inverse_transform(y_pred_test)
     y_test = sscalerY.inverse_transform(y_test)
 
+    #Evaluate the model based on test set
     errTest = mean_absolute_error(y_test, y_pred_test)
     err_mseTest = mean_squared_error(y_test, y_pred_test)
     err_r2Test = r2_score(y_test, y_pred_test)
 
+    #Predict the train data and rescale them
     y_pred_train = reg.predict(x_train)
-
     y_pred_train = sscalerY.inverse_transform(y_pred_train)
     y_train = sscalerY.inverse_transform(y_train)
 
+    #Evaluate the model based on train set
     errTrain = mean_absolute_error(y_train, y_pred_train)
     err_mseTrain = mean_squared_error(y_train, y_pred_train)
     err_r2Train = r2_score(y_train, y_pred_train)
 
+    #Print the results
     print("Test  :  ","MAE: ",errTest,"MSE: ",err_mseTest,"R^2: ",err_r2Test)
     print("Train :  ","MAE: ",errTrain,"MSE: ",err_mseTrain,"R^2: ",err_r2Train)
 
@@ -193,7 +189,7 @@ def retrainModel_NumberOfTrips(dfTripsPerDay, optimalHyperparameterTest):
 
 
     #Retrain the model on all available data
-  
+
     #Scale the Data
     sscaler = StandardScaler()
     xScaled = sscaler.fit_transform(X)
@@ -213,17 +209,21 @@ def retrainModel_NumberOfTrips(dfTripsPerDay, optimalHyperparameterTest):
     dump(sscalerY,pathScalerY)
     
 
+#Loads the saved ml-model and scaler
 def loadModel_NumberOfTrips():
-    #Load regression
+    #Load random forest regressor
     path = os.path.join(utils.get_ml_path(), "numberOfTrips/randomForestRegressor_NumberOfTrips.pkl")
     rfr = load(path , mmap_mode ='r')
+    #Load scaler for input data
     pathScaler = os.path.join(utils.get_ml_path(), "numberOfTrips/randomForestRegressor_NumberOfTripsScaler.bin")
     sscaler = load(pathScaler)
+    #Load scaler for target feature
     pathScalerY = os.path.join(utils.get_ml_path(), "numberOfTrips/randomForestRegressor_NumberOfTripsScalerY.bin")
     sscalerY = load(pathScalerY)
   
     return rfr,sscaler, sscalerY
 
+#Predicts the number of trips for the next day
 def predict_NumberOfTrips(dfInput, model, sscaler, sscalerY):
 
     #Mean values for compare
@@ -232,7 +232,9 @@ def predict_NumberOfTrips(dfInput, model, sscaler, sscalerY):
 
     #Create inputs dataframe and scale it
     df = dfInput.copy()
+    #Create necessary features
     features = createFeatures(df)
+    #Save the true values to evaluate later
     goal = features['tripsPerDay']
     features.drop('tripsPerDay',inplace=True,axis=1,errors='ignore')
     featureValues = features.values
@@ -249,6 +251,7 @@ def predict_NumberOfTrips(dfInput, model, sscaler, sscalerY):
 
     print("Prediction is saved to csv --> output/NumberOfTripPrediction.csv")
 
+    #Evaluate the prediction
     errTest = mean_absolute_error(goal, prediction)
     err_mseTest = mean_squared_error(goal, prediction)
     err_r2Test = r2_score(goal, prediction)
@@ -284,6 +287,7 @@ def predict_NumberOfTrips(dfInput, model, sscaler, sscalerY):
     return df
 
 
+#Checks if uni is open
 def isTerm(row):
     value = -1
     if datetime.datetime(2019, 1, 7) <= row['date'] <= datetime.datetime(2019, 2, 15):
