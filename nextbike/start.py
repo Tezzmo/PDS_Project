@@ -16,8 +16,7 @@ from IPython.core.display import HTML
 
 #Entering point
 def main(train,transform,predict):
-    print(train,transform,predict)
-
+    warnings.filterwarnings("ignore")
     if transform != None:
         if (train != None) & (transform != None) & (predict != None):
             dfWeather,dfTrips,dfStations,dfBikesPerStationIndex,dfTripsPerDay = rebuild(train)
