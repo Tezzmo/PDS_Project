@@ -196,11 +196,9 @@ def rebuild(datapath = None):
     dfRawData = io.preprocessData(rawData)  
     dfTripsRaw = io.createTrips(dfRawData)
 
-    if datapath == None:
-        dfTrips = io.drop_outliers(dfTripsRaw)
-    else:
-        #dfTrips = dfTripsRaw
-        dfTrips = io.drop_outliers(dfTripsRaw)
+    #Drop outliers
+    dfTrips = io.drop_outliers(dfTripsRaw)
+    
     #Add postalcode infos
     print("Assign postalCode   -- 60%")
     dfTrips = postalCodes.assignPostalCode(dfTrips)
