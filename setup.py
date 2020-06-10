@@ -2,10 +2,9 @@ from setuptools import setup
 
 setup(
     name='PDS_Project',
-    version='0.0.1.dev20',
+    version='1.0.1',
     description="Semester Project - Programming Data Science",
-    author="Student",
-    author_email="student@uni-koeln.de",
+    author="Tobias Olbrück, Lorenz Kriehn, Fabian Rehn, Jonas Fröhlich",
     packages=["nextbike"],
     install_requires=['pandas', 'scikit-learn', 'click', 'geopy', 'folium','sklearn'],
     entry_points={
