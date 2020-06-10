@@ -176,11 +176,17 @@ def retrainModel_DurationOfTrips(dfTrips,dfWeather, optimalHyperparameterTest):
 
     
     # Visualize 
-    #plt.plot(range(len(y_test)),y_test,'rx')
-    #plt.plot(range(len(y_pred_test)),y_pred_test,'bo')
     
+    #plt.plot(range(len(y_test)),y_test,'rx',label='True duration',markersize=3)
+    #plt.xlabel('Prediction')
+    #plt.ylabel('Trip duration in seconds')
+    
+    #plt.plot(range(len(y_pred_test)),y_pred_test,'bo',label='Predicted duration',markersize=3)
+    #plt.legend()
+    
+    #plt.rcParams["font.size"] = "200"
     #plt.show()
-
+    
     #Save the model
     path = os.path.join(utils.get_ml_path(), "DurationOfTrips/randomForestRegressor_DurationOfTrips.pkl")
     dump(reg,path)
@@ -240,9 +246,12 @@ def predict_DurationOfTrips(dfInput,dfWeather, model, sscaler, sscalerY):
     #r2test = r2_score(true_y, prediction)
     print('MAE: ', errTest)
     #print('R2: ', r2test)
-    #plt.plot(range(len(true_y)),true_y,'rx')
-    #plt.plot(range(len(prediction)),prediction,'bo')
+    #plt.plot(range(len(true_y)),true_y,'rx',label='True duration',markersize='8')
+    #plt.xlabel('Prediction')
+    #plt.ylabel('Trip duration in seconds')
     
+    #plt.plot(range(len(prediction)),prediction,'bo',label='Predicted duration',markersize='8')
+    #plt.legend()
     #plt.show()
 
 
