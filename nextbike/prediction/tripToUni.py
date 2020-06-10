@@ -15,7 +15,7 @@ from sklearn.neighbors import KNeighborsRegressor
 from sklearn.decomposition import PCA
 from sklearn.ensemble import ExtraTreesClassifier
 import pickle
-from sklearn.externals.joblib import dump, load
+from joblib import dump, load
 from . import utils
 import os
 

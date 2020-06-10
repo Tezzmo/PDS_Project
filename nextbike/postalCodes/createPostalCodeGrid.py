@@ -2,7 +2,7 @@ import math
 import pandas as pd
 from geopy.geocoders import Nominatim
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.externals import joblib
+import joblib
 
 
 #Define the range of possible coordinates

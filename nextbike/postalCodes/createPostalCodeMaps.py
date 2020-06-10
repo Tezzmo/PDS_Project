@@ -1,5 +1,5 @@
 from sklearn.neighbors import NearestNeighbors
-from sklearn.externals import joblib
+import joblib
 from .utils import get_gejson_path
 import pandas as pd
 import datetime

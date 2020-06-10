@@ -1,6 +1,6 @@
 from geopy.geocoders import Nominatim
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.externals import joblib
+import joblib
 from .utils import get_ml_path
 from .utils import get_gejson_path
 import pandas as pd

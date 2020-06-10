@@ -5,8 +5,7 @@ from . import postalCodes
 from . import visualization
 from . import prediction
 import warnings
-from IPython.display import display, Image
-from IPython.core.display import HTML
+
 
 @click.command()
 @click.option('--train',default=None, help="Input a filename. Train the model on this data.")

@@ -10,7 +10,7 @@ from sklearn.metrics import r2_score
 from sklearn.metrics import mean_squared_error
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import RandomizedSearchCV
-from sklearn.externals.joblib import dump, load
+from joblib import dump, load
 from . import utils
 import os
 
