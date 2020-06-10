@@ -278,6 +278,7 @@ def predict_NumberOfTrips(dfInput, model, sscaler, sscalerY):
     plt.plot(dfInput['date'],goal, label="Number of trips")
     plt.title("Visualization of the Prediction")
     plt.xlabel("Date")
+    plt.xticks(rotation=45)
     plt.ylabel("Number of Trips")
     plt.legend(loc="upper left")
 
